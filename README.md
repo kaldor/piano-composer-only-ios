@@ -1,11 +1,23 @@
 # Piano SDK for iOS
 Piano SDK includes dynamic frameworks written in Swift.
 
-- **[PianoComposer](http://cocoapods.org/pods/PianoComposer):** provides access to the mobile composer
+- **[PianoCommon](http://cocoapods.org/pods/PianoCommon):** common components for the SDK 
+
+[![Version](https://img.shields.io/cocoapods/v/PianoCommon.svg?style=flat)](http://cocoapods.org/pods/PianoCommon)
+[![Platform](https://img.shields.io/cocoapods/p/PianoCommon.svg?style=flat)](http://cocoapods.org/pods/PianoCommon)
+[![License](https://img.shields.io/cocoapods/l/PianoCommon.svg?style=flat)](http://cocoapods.org/pods/PianoCommon)
+
+- **[PianoComposer](http://cocoapods.org/pods/PianoComposer):** provides access to the mobile composer (Apple TV support)
 
 [![Version](https://img.shields.io/cocoapods/v/PianoComposer.svg?style=flat)](http://cocoapods.org/pods/PianoComposer)
 [![Platform](https://img.shields.io/cocoapods/p/PianoComposer.svg?style=flat)](http://cocoapods.org/pods/PianoComposer)
 [![License](https://img.shields.io/cocoapods/l/PianoComposer.svg?style=flat)](http://cocoapods.org/pods/PianoComposer)
+
+- **[PianoTemplate](http://cocoapods.org/pods/PianoComposer):** template components
+
+[![Version](https://img.shields.io/cocoapods/v/PianoTemplate.svg?style=flat)](http://cocoapods.org/pods/PianoTemplate)
+[![Platform](https://img.shields.io/cocoapods/p/PianoTemplate.svg?style=flat)](http://cocoapods.org/pods/PianoTemplate)
+[![License](https://img.shields.io/cocoapods/l/PianoTemplate.svg?style=flat)](http://cocoapods.org/pods/PianoTemplate)
 
 - **[PianoOAuth](http://cocoapods.org/pods/PianoOAuth):** component for authentication with user providers Piano ID and Piano Accounts. Frameworks can be used for development iOS applications on Objective-c and Swift.
 
@@ -15,12 +27,16 @@ Piano SDK includes dynamic frameworks written in Swift.
 
 - **[PianoC1X](C1X.MD):** component for integration Piano Composer with [Cxense](https://github.com/cXense/cxense-spm).
 
+[![Version](https://img.shields.io/cocoapods/v/PianoC1X.svg?style=flat)](http://cocoapods.org/pods/PianoC1X)
+[![Platform](https://img.shields.io/cocoapods/p/PianoC1X.svg?style=flat)](http://cocoapods.org/pods/PianoC1X)
+[![License](https://img.shields.io/cocoapods/l/PianoC1X.svg?style=flat)](http://cocoapods.org/pods/PianoC1X)
+
 This document details the process of integrating the Piano SDK with your iOS application. If you have any questions, don't hesitate to email us at support@piano.io.
 
 ## Requirements
-- iOS 9.0+
-- Xcode 12.0
-- Swift 5.1
+- iOS 10.0+
+- Xcode 13.0
+- Swift 5.5
 
 ## Installation
 
@@ -31,12 +47,20 @@ Add the following lines to your `Podfile`.
 ```
 use_frameworks!
 
-pod 'PianoComposer', '~>2.4.1'
-pod 'PianoOAuth', '~>2.4.1'
+pod 'PianoComposer', '~> 2.5.0'
+pod 'PianoTemplate', '~> 2.5.0'
+pod 'PianoOAuth', '~> 2.5.0'
+pod 'PianoC1X', '~> 2.5.0'
 ```
 
 Then run `pod install`. For details of the installation and usage of CocoaPods, visit [official web site](https://cocoapods.org/).
 
+### [Swift Package Manager](https://developer.apple.com/documentation/swift_packages/adding_package_dependencies_to_your_app)
+Add the components you need from the repository:
+
+**URL:** https://gitlab.com/piano-public/sdk/ios/package
+
+**Version:** 2.5.0
 
 ## PianoComposer Usage
 
@@ -45,7 +69,7 @@ Then run `pod install`. For details of the installation and usage of CocoaPods, 
 // swift
 import PianoComposer
 ```
-```
+```obj-c
 // objective-c
 @import PianoComposer;
 ```
@@ -106,6 +130,59 @@ We recommend to use that tag in mobile templates for correct display on iOS devi
 <meta name="viewport" content="width=device-width, initial-scale=1">
 ```
 
+## PianoTemplate Usage
+
+#### Imports
+```swift
+// swift
+import PianoTemplate
+```
+```obj-c
+// objective-c
+@import PianoTemplate;
+```
+
+PianoTemplate uses the ShowTemplateEventParams from the PianoComposer component. Implement the PianoComposerDelegate.showTemplate function to get these parameters. 
+
+#### Modal template view
+```swift
+func showTemplate(composer: PianoComposer, event: XpEvent, params: ShowTemplateEventParams?) {
+    guard let p = params else {
+        return
+    }
+    
+    PianoShowTemplateController(params: p).show()
+}
+```
+
+#### Inline template view
+```swift
+class MyDelegate: PianoComposerDelegate, ComposerShowTemplateDelegate {
+
+    var webView: WKWebView
+    
+    func findViewBySelector(selector: String) -> UIView? {
+        guard selector == "my_selector_name" else {
+            return nil
+        }
+        return webView
+    }
+
+    func showTemplate(composer: PianoComposer, event: XpEvent, params: ShowTemplateEventParams?) {
+        guard let p = params else {
+            return
+        }
+        
+        let controller = PianoShowTemplateController(params: p)
+        controller.delegate = self
+        controller.show()
+    }
+
+    ...
+}
+
+```
+
 
 ## PianoOAuth Usage
 
@@ -117,29 +194,7 @@ import PianoOAuth
 ```
 // objective-c
 @import PianoOAuth;
-
 ```
-
-#### Piano accounts user provider
-##### Usage
-```swift
-let vc = PianoOAuthPopupViewController(aid: "<PUBLISHER_AID>") // for piano accounts user provider
-...
-vc.delegate = someDelegate // conform PianoOAuthDelegate protocol
-vc.signUpEnabled = true // makes "sign up" button enabled (default: false)
-vc.widgetType = .login // widget type (possible values: ".login", ".register")
-vc.showPopup()
-```
-##### PianoOAuthDelegate protocol
-```swift
-func loginSucceeded(accessToken: String)
-func loginCancelled() 
-```
-
-##### Screenshots
-<img src="./Images/oauth_iphone.png" alt="iPhone example" width="200"/>
-<img src="./Images/oauth_ipad.png" alt="iPad example" width="446"/>
-
 
 #### Piano ID user provider
 
@@ -221,4 +276,20 @@ func signIn(result: PianoIDSignInResult!, withError error: Error!);
 func signOut(withError error: Error!);
 
 func cancel();
+```
+
+#### Piano accounts user provider **(deprecated)**
+##### Usage
+```swift
+let vc = PianoOAuthPopupViewController(aid: "<PUBLISHER_AID>") // for piano accounts user provider
+...
+vc.delegate = someDelegate // conform PianoOAuthDelegate protocol
+vc.signUpEnabled = true // makes "sign up" button enabled (default: false)
+vc.widgetType = .login // widget type (possible values: ".login", ".register")
+vc.showPopup()
+```
+##### PianoOAuthDelegate protocol
+```swift
+func loginSucceeded(accessToken: String)
+func loginCancelled() 
 ```

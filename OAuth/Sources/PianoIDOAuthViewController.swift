@@ -5,6 +5,8 @@ import PianoCommon
 
 @objcMembers
 class PianoIDOAuthViewController: UIViewController {
+    
+    private static let bundle = Bundle.load("PianoSDK_PianoOAuth", for: PianoIDOAuthViewController.self)
 
     let loginSuccessMessageHandler = "loginSuccess"
     let registerSuccessMessageHandler = "registerSuccess"
@@ -98,7 +100,7 @@ class PianoIDOAuthViewController: UIViewController {
         let fixedSpace = UIBarButtonItem(barButtonSystemItem: .fixedSpace, target: nil, action: nil)
         fixedSpace.width = 60.0
 
-        if let chevronLeftImage = UIImage(named: "piano_chevron"), let chevronLeftCGImage = chevronLeftImage.cgImage {
+        if let chevronLeftImage = UIImage(named: "piano_chevron", in: PianoIDOAuthViewController.bundle, compatibleWith: nil), let chevronLeftCGImage = chevronLeftImage.cgImage {
             backButton = UIBarButtonItem(image: chevronLeftImage, style: .plain, target: self, action: #selector(onBackButtonTouch(_:)))
             forwardButton = UIBarButtonItem(image: UIImage(cgImage: chevronLeftCGImage, scale: chevronLeftImage.scale, orientation: .upMirrored), style: .plain, target: self, action: #selector(onForwardButtonTouch(_:)))
         } else {
