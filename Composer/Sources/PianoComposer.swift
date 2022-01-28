@@ -1,4 +1,5 @@
 import Foundation
+import UIKit
 
 import PianoCommon
 
@@ -35,7 +36,7 @@ public class PianoEndpoint: NSObject {
     }
 
     public static var sandbox: PianoEndpoint {
-        PianoEndpoint(api: "https://sandbox.piano.io", composer: "https://c2.sandbox.piano.io")
+        PianoEndpoint(api: "https://sandbox.piano.io", composer: "https://c2-sandbox.piano.io")
     }
 
     public let api: String
@@ -272,9 +273,13 @@ public class PianoComposer: NSObject {
 
             PianoLogger.debug(message: "Composer request = \(requestUrl.absoluteURL)")
             dataTask = session.dataTask(with: request, completionHandler: { (data, response, error) in
-                DispatchQueue.main.async {
-                    //UIApplication.shared.isNetworkActivityIndicatorVisible = false
-                }
+                #if os(iOS)
+                    if #available(iOS 14, *) {} else {
+                        DispatchQueue.main.async {
+                            UIApplication.shared.isNetworkActivityIndicatorVisible = false
+                        }
+                    }
+                #endif
 
                 let result = self.taskCompleted(data: data, response: response, error: error)
                 DispatchQueue.main.async {
@@ -287,9 +292,14 @@ public class PianoComposer: NSObject {
             })
 
             if dataTask != nil {
-                DispatchQueue.main.async {
-                    //UIApplication.shared.isNetworkActivityIndicatorVisible = true
-                }
+                #if os(iOS)
+                    if #available(iOS 14, *) {} else {
+                        DispatchQueue.main.async {
+                            UIApplication.shared.isNetworkActivityIndicatorVisible = true
+                        }
+                    }
+                #endif
+                
                 dataTask?.resume()
             }
         }
@@ -481,7 +491,6 @@ public class PianoComposer: NSObject {
                 PianoLogger.debug(message: "EventType \"\(event.eventType)\" has not item in eventTypeMap")
             }
         }
-        delegate = nil
     }
 
     fileprivate func buildTemplateUrl(event: XpEvent, params: ShowTemplateEventParams) -> String {

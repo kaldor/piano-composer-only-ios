@@ -161,9 +161,11 @@ public class PianoID: NSObject {
                         let dataTask = self.urlSession.dataTask(with: request) { (data, response, error) in
                             if error == nil, let httpResponse = response as? HTTPURLResponse, httpResponse.statusCode == 200, let responseData = data {
                                 if let token = self.parseToken(response: response!, responseData: responseData) {
+                                    self._currentToken = token
+                                    _ = PianoIDTokenStorage.shared.saveToken(token, aid: self.getAID())
+                                    
                                     completion(token, nil)
                                     return
-
                                 }
                             }
 

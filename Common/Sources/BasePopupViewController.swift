@@ -7,6 +7,8 @@ import UIKit
 @objcMembers
 open class BasePopupViewController: UIViewController {
     
+    private static let bundle = Bundle.load("PianoSDK_PianoCommon", for: BasePopupViewController.self)
+    
     fileprivate let closeButtonSize: CGFloat = 44
     
     fileprivate let closeButtonName = "piano_modal_close"
@@ -16,8 +18,7 @@ open class BasePopupViewController: UIViewController {
     override open func viewDidLoad() {
         super.viewDidLoad()
         
-        let bundle = Bundle(for: type(of: self))
-        let closeImage = UIImage(named: closeButtonName, in: bundle, compatibleWith: nil)
+        let closeImage = UIImage(named: closeButtonName, in: BasePopupViewController.bundle, compatibleWith: nil)
         closeButton = UIButton(type: .system)        
         closeButton.contentMode = UIView.ContentMode.scaleAspectFit
         closeButton.setImage(closeImage, for: UIControl.State.normal)

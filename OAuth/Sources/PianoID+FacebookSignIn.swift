@@ -1,8 +1,6 @@
 import FBSDKCoreKit
 import FBSDKLoginKit
 
-import FacebookLogin
-
 extension PianoID {
     
     @available(tvOS, unavailable)
