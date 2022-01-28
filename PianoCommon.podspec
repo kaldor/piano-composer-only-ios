@@ -9,7 +9,7 @@ Pod::Spec.new do |s|
   s.platform     = :ios, :tvos
   s.ios.deployment_target = '10.0'
   s.tvos.deployment_target = '10.0'
-  s.source       = { :git => 'git@gitlab.com:piano-public/sdk/ios/package.git', :tag => "#{s.version}" }
+  s.source       = { :git => 'https://gitlab.com/piano-public/sdk/ios/package.git', :tag => "#{s.version}" }
   s.resource_bundle = {
       "PianoSDK_PianoCommon" => ["Common/Sources/Resources/*"]
   }
