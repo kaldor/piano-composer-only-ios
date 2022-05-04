@@ -6,6 +6,8 @@ import PianoCommon
 fileprivate enum EventType: Int {
     case showLogin
     case showTemplate
+    case showForm
+    case showRecommendations
     case setResponseVariable
     case nonSite
     case userSegmentTrue
@@ -74,6 +76,8 @@ public class PianoComposer: NSObject {
 
     fileprivate let eventTypeMap = ["showLogin": EventType.showLogin,
                                     "showTemplate": EventType.showTemplate,
+                                    "showForm": EventType.showForm,
+                                    "showRecommendations": EventType.showRecommendations,
                                     "setResponseVariable": EventType.setResponseVariable,
                                     "nonSite": EventType.nonSite,
                                     "userSegmentTrue": EventType.userSegmentTrue,
@@ -86,6 +90,7 @@ public class PianoComposer: NSObject {
     fileprivate let userAgent = ComposerHelper.generateUserAgent()
     fileprivate let executeAction = "/xbuilder/experience/executeMobile"
     fileprivate let showTemplateAction = "/checkout/template/show"
+    fileprivate let showFormAction = "/id/form"
 
     fileprivate var interceptors: [PianoComposerInterceptor] = []
     fileprivate var session: URLSession
@@ -110,6 +115,8 @@ public class PianoComposer: NSObject {
     public var contentIsNative: Bool? = nil
     public var gaClientId: String = ""
     public var browserId: String = ""
+    
+    private(set) public var accessToken = ""
 
     @available(*, deprecated, message: "Use endpoint property")
     public var endpointUrl: String {
@@ -361,16 +368,15 @@ public class PianoComposer: NSObject {
             tbc = tbcDict["cookie_value"] as? String ?? ""
         }
 
-        var tac = ""
         if let tacDict = dict["tac"] as? [String: Any] {
-            tac = tacDict["cookie_value"] as? String ?? ""
+            accessToken = tacDict["cookie_value"] as? String ?? ""
         }
 
         let appTimezoneOffset = dict["timezone_offset"] as? Int ?? 0
         let visitTimeout = dict["visit_timeout"] as? Int ?? 30 // 30 minutes
 
         PianoLogger.debug(message: "Save cookies and preferences")
-        Preferences.saveCookies(data: Preferences.CookieData(xbc: xbc, tbc: tbc, tac: tac))
+        Preferences.saveCookies(data: Preferences.CookieData(xbc: xbc, tbc: tbc, tac: accessToken))
         Preferences.saveVisitPreferences(visitPreferences: Preferences.VisitPreferences(appTimezoneOffset: appTimezoneOffset, visitTimeout: visitTimeout * 60000))
     }
 
@@ -443,7 +449,7 @@ public class PianoComposer: NSObject {
         }
     }
 
-    fileprivate func processErrorResult(errorResult: ErrorResult) {
+fileprivate func processErrorResult(errorResult: ErrorResult) {
         guard !errorResult.errors.isEmpty else {
             return
         }
@@ -468,6 +474,16 @@ public class PianoComposer: NSObject {
                         showTemplateEventParams!.trackingId = event.eventExecutionContext?.trackingId ?? ""
                     }
                     delegate?.showTemplate?(composer: self, event: event, params: showTemplateEventParams)
+                case .showForm:
+                    let showFormEventParams = ShowFormEventParams(dict: event.eventParams)
+                    if showFormEventParams != nil {
+                        showFormEventParams!.trackingId = event.eventExecutionContext?.trackingId
+                        showFormEventParams!.aid = aid
+                        showFormEventParams!.endpointUrl = getBaseUrl(isExecute: false)
+                    }
+                    delegate?.showForm?(composer: self, event: event, params: showFormEventParams)
+                case .showRecommendations:
+                    delegate?.showRecommendations?(composer: self, event: event, params: ShowRecommendationsEventParams(dict: event.eventParams))
                 case .setResponseVariable:
                     delegate?.setResponseVariable?(composer: self, event: event, params: SetResponseVariableParams(dict: event.eventParams))
                 case .nonSite:

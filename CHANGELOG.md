@@ -1,5 +1,12 @@
 # Piano SDK for iOS
 
+## v2.5.1
+* [PianoComposer] - Added support accessToken for CDN
+* [PianoComposer] - Added support forms
+* [PianoComposer] - Added support recommendations
+* [PianoTemplate] - Added support form template
+* [PianoTemplate] - Added support recommendations template
+
 ## v2.5.0
 * Added Swift Package Manager support
 * [PianoCommon] Common functionality moved to a new component PianoCommon
