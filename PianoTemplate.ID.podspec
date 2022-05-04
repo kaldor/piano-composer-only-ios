@@ -10,6 +10,7 @@ Pod::Spec.new do |s|
   s.ios.deployment_target = '10.0'
   s.source       = { :git => 'https://gitlab.com/piano-public/sdk/ios/package.git', :tag => "#{s.version}" }
   s.source_files = 'Template/ID/Sources/**/*.swift', 'Template/ID/Sources/**/*.h'
+  s.static_framework = true
   s.pod_target_xcconfig = { 'EXCLUDED_ARCHS[sdk=iphonesimulator*]' => 'arm64' }
   s.user_target_xcconfig = { 'EXCLUDED_ARCHS[sdk=iphonesimulator*]' => 'arm64' }
   s.dependency 'PianoTemplate', "~> #{s.version}"
