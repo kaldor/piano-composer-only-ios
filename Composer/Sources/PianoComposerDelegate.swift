@@ -12,6 +12,16 @@ import Foundation
     @objc optional func showTemplate(composer: PianoComposer, event: XpEvent, params: ShowTemplateEventParams?)
     
     /**
+     Show form event
+     */
+    @objc optional func showForm(composer: PianoComposer, event: XpEvent, params: ShowFormEventParams?)
+    
+    /**
+     Show recommendations event
+     */
+    @objc optional func showRecommendations(composer: PianoComposer, event: XpEvent, params: ShowRecommendationsEventParams?)
+    
+    /**
      Set response variable event
      */
     @objc optional func setResponseVariable(composer: PianoComposer, event: XpEvent, params: SetResponseVariableParams?)

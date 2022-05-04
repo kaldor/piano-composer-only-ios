@@ -1,9 +1,7 @@
 import Foundation
 import UIKit
 
-@objc public protocol PianoShowTemplateDelegate: AnyObject {
-    
-    func findViewBySelector(selector: String) -> UIView?
+@objc public protocol PianoShowTemplateDelegate: PianoTemplateInlineDelegate {
     
     @objc optional func onCustomEvent(eventData: Any)
     

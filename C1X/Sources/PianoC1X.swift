@@ -1,6 +1,9 @@
 import Foundation
+
 import PianoCommon
 import PianoComposer
+import PianoTemplate
+
 import CxenseSDK
 
 /// Piano C1X intergration
@@ -92,5 +95,13 @@ import CxenseSDK
             
             Cxense.reportEvent(event)
         }
+    }
+    
+    public static func recommendations(params: ShowRecommendationsEventParams, renderTemplateUrl: String = "auto") -> PianoShowRecommendationsController {
+        return PianoShowRecommendationsController(
+            params: params,
+            renderTemplateUrl: renderTemplateUrl,
+            userId: Cxense.getPersistentCookie()
+        )
     }
 }

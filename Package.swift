@@ -25,6 +25,10 @@ let package = Package(
             name: "PianoTemplate",
             targets: ["PianoTemplate"]
         ),
+        .library(
+            name: "PianoTemplate.ID",
+            targets: ["PianoTemplate.ID"]
+        ),
        .library(
            name: "PianoC1X",
            targets: ["PianoC1X"]
@@ -81,18 +85,33 @@ let package = Package(
             dependencies: [
                 "PianoComposer"
             ],
-            path: "Template/Sources"
+            path: "Template/Core/Sources"
         ),
         .testTarget(
             name: "PianoTemplateTests",
             dependencies: ["PianoTemplate"],
-            path: "Template/Tests"
+            path: "Template/Core/Tests"
+        ),
+        /// Template.ID
+        .target(
+            name: "PianoTemplate.ID",
+            dependencies: [
+                "PianoOAuth",
+                "PianoTemplate"
+            ],
+            path: "Template/ID/Sources"
+        ),
+        .testTarget(
+            name: "PianoTemplateIDTests",
+            dependencies: ["PianoTemplate.ID"],
+            path: "Template/ID/Tests"
         ),
         /// C1X
         .target(
             name: "PianoC1X",
             dependencies: [
                 "PianoComposer",
+                "PianoTemplate",
                 "CxenseSDK"
             ],
             path: "C1X/Sources"

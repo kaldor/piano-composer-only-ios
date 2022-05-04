@@ -13,11 +13,17 @@ Piano SDK includes dynamic frameworks written in Swift.
 [![Platform](https://img.shields.io/cocoapods/p/PianoComposer.svg?style=flat)](http://cocoapods.org/pods/PianoComposer)
 [![License](https://img.shields.io/cocoapods/l/PianoComposer.svg?style=flat)](http://cocoapods.org/pods/PianoComposer)
 
-- **[PianoTemplate](http://cocoapods.org/pods/PianoComposer):** template components
+- **[PianoTemplate](http://cocoapods.org/pods/PianoTemplate):** template components
 
 [![Version](https://img.shields.io/cocoapods/v/PianoTemplate.svg?style=flat)](http://cocoapods.org/pods/PianoTemplate)
 [![Platform](https://img.shields.io/cocoapods/p/PianoTemplate.svg?style=flat)](http://cocoapods.org/pods/PianoTemplate)
 [![License](https://img.shields.io/cocoapods/l/PianoTemplate.svg?style=flat)](http://cocoapods.org/pods/PianoTemplate)
+
+- **[PianoTemplate.ID](http://cocoapods.org/pods/PianoTemplate.ID):** template components for Piano ID
+
+[![Version](https://img.shields.io/cocoapods/v/PianoTemplate.ID.svg?style=flat)](http://cocoapods.org/pods/PianoTemplate.ID)
+[![Platform](https://img.shields.io/cocoapods/p/PianoTemplate.ID.svg?style=flat)](http://cocoapods.org/pods/PianoTemplate.ID)
+[![License](https://img.shields.io/cocoapods/l/PianoTemplate.ID.svg?style=flat)](http://cocoapods.org/pods/PianoTemplate.ID)
 
 - **[PianoOAuth](http://cocoapods.org/pods/PianoOAuth):** component for authentication with user providers Piano ID and Piano Accounts. Frameworks can be used for development iOS applications on Objective-c and Swift.
 
@@ -25,7 +31,7 @@ Piano SDK includes dynamic frameworks written in Swift.
 [![Platform](https://img.shields.io/cocoapods/p/PianoOAuth.svg?style=flat)](http://cocoapods.org/pods/PianoOAuth)
 [![License](https://img.shields.io/cocoapods/l/PianoOAuth.svg?style=flat)](http://cocoapods.org/pods/PianoOAuth)
 
-- **[PianoC1X](C1X.MD):** component for integration Piano Composer with [Cxense](https://github.com/cXense/cxense-spm).
+- **[PianoC1X](http://cocoapods.org/pods/PianoC1X):** component for integration Piano Composer with [Cxense](https://github.com/cXense/cxense-spm).
 
 [![Version](https://img.shields.io/cocoapods/v/PianoC1X.svg?style=flat)](http://cocoapods.org/pods/PianoC1X)
 [![Platform](https://img.shields.io/cocoapods/p/PianoC1X.svg?style=flat)](http://cocoapods.org/pods/PianoC1X)
@@ -47,10 +53,11 @@ Add the following lines to your `Podfile`.
 ```
 use_frameworks!
 
-pod 'PianoComposer', '~> 2.5.0'
-pod 'PianoTemplate', '~> 2.5.0'
-pod 'PianoOAuth', '~> 2.5.0'
-pod 'PianoC1X', '~> 2.5.0'
+pod 'PianoComposer', '~> 2.5.1'
+pod 'PianoTemplate', '~> 2.5.1'
+pod 'PianoTemplate.ID', '~> 2.5.1'
+pod 'PianoOAuth', '~> 2.5.1'
+pod 'PianoC1X', '~> 2.5.1'
 ```
 
 Then run `pod install`. For details of the installation and usage of CocoaPods, visit [official web site](https://cocoapods.org/).
@@ -116,6 +123,8 @@ optional func composerExecutionCompleted(composer: PianoComposer)
 // Composer actions from server 
 optional func showLogin(composer: PianoComposer, event: XpEvent, params: ShowLoginEventParams?)
 optional func showTemplate(composer: PianoComposer, event: XpEvent, params: ShowTemplateEventParams?)
+optional func showForm(composer: PianoComposer, event: XpEvent, params: ShowFormEventParams?)
+optional func showRecommendations(composer: PianoComposer, event: XpEvent, params: ShowRecommendationsEventParams?)
 optional func nonSite(composer: PianoComposer, event: XpEvent)
 optional func userSegmentTrue(composer: PianoComposer, event: XpEvent)
 optional func userSegmentFalse(composer: PianoComposer, event: XpEvent)    
@@ -124,65 +133,8 @@ optional func meterExpired(composer: PianoComposer, event: XpEvent, params: Page
 optional func experienceExecute(composer: PianoComposer, event: XpEvent, params: ExperienceExecuteEventParams?)
 ```
 
-##### Show templates
-We recommend to use that tag in mobile templates for correct display on iOS devices
-```html
-<meta name="viewport" content="width=device-width, initial-scale=1">
-```
-
-## PianoTemplate Usage
-
-#### Imports
-```swift
-// swift
-import PianoTemplate
-```
-```obj-c
-// objective-c
-@import PianoTemplate;
-```
-
-PianoTemplate uses the ShowTemplateEventParams from the PianoComposer component. Implement the PianoComposerDelegate.showTemplate function to get these parameters. 
-
-#### Modal template view
-```swift
-func showTemplate(composer: PianoComposer, event: XpEvent, params: ShowTemplateEventParams?) {
-    guard let p = params else {
-        return
-    }
-    
-    PianoShowTemplateController(params: p).show()
-}
-```
-
-#### Inline template view
-```swift
-class MyDelegate: PianoComposerDelegate, ComposerShowTemplateDelegate {
-
-    var webView: WKWebView
-    
-    func findViewBySelector(selector: String) -> UIView? {
-        guard selector == "my_selector_name" else {
-            return nil
-        }
-        return webView
-    }
-
-    func showTemplate(composer: PianoComposer, event: XpEvent, params: ShowTemplateEventParams?) {
-        guard let p = params else {
-            return
-        }
-        
-        let controller = PianoShowTemplateController(params: p)
-        controller.delegate = self
-        controller.show()
-    }
-
-    ...
-}
-
-```
-
+## Templates
+For more information about templates, see the documentation at the **[link](TEMPLATES.md)**.
 
 ## PianoOAuth Usage
 
@@ -293,3 +245,6 @@ vc.showPopup()
 func loginSucceeded(accessToken: String)
 func loginCancelled() 
 ```
+
+## Cxense integration
+For more information about Cxense integration (C1X), see the documentation at the **[link](C1X.md)**.

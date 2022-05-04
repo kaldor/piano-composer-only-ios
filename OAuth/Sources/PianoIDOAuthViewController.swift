@@ -24,6 +24,7 @@ class PianoIDOAuthViewController: UIViewController {
 
     var url: URL?
     var code: String = ""
+    var completion: ((PianoIDSignInResult?, Error?) -> Void)? = nil
 
     var navigationBar: UINavigationBar!
     var progressView: UIProgressView!
@@ -32,11 +33,12 @@ class PianoIDOAuthViewController: UIViewController {
     var backButton: UIBarButtonItem!
     var forwardButton: UIBarButtonItem!
 
-    init(title: String?, url: URL?) {
+    init(title: String?, url: URL?, completion: ((PianoIDSignInResult?, Error?) -> Void)? = nil) {
         super.init(nibName: nil, bundle: nil)
 
         self.url = url
         self.title = title
+        self.completion = completion
     }
 
     required init?(coder: NSCoder) {
@@ -308,7 +310,7 @@ extension PianoIDOAuthViewController: WKNavigationDelegate {
         }
 
         let jsBridgeInitialScript =
-            "window.PianoIDMobileSDK={};" +
+            "window.PianoIDMobileSDK=window.PianoIDMobileSDK||{};" +
             "window.PianoIDMobileSDK.\(loginSuccessMessageHandler)=" +
             "function(body){try{webkit.messageHandlers.\(loginSuccessMessageHandler).postMessage(body)}catch(err){console.log(err)}};" +
             "window.PianoIDMobileSDK.\(registerSuccessMessageHandler)=" +
@@ -430,7 +432,7 @@ extension PianoIDOAuthViewController: WKScriptMessageHandler {
         if let accessToken = json["accessToken"] as? String {
             let refreshToken = json["refreshToken"] as? String ?? ""
             let idToken = PianoIDToken(accessToken: accessToken, refreshToken: refreshToken)
-            PianoID.shared.signInSuccess(idToken, isNewUser)
+            PianoID.shared.signInSuccess(idToken, isNewUser, completion: completion)
         }
     }
 

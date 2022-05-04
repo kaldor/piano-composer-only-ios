@@ -22,6 +22,7 @@ public class PianoID: NSObject {
     private let passwordlessPath = "/id/api/v1/identity/passwordless/authorization/code"
     private let tokenPath = "/id/api/v1/identity/oauth/token"
     private let logoutPath = "/id/api/v1/identity/logout"
+    private let formInfoPath = "/id/api/v1/identity/userinfo"
 
     private var urlSession: URLSession
 
@@ -75,22 +76,22 @@ public class PianoID: NSObject {
         super.init()
     }
 
-    internal func getAID() -> String {
+    public func getAID() -> String {
         assert(!aid.isEmpty, "PIANO_ID: Piano AID should be specified")
         return aid
     }
 
-    public func signIn() {
+    public func signIn(completion: ((PianoIDSignInResult?, Error?) -> Void)? = nil) {
         getDeploymentHost(
                 success: { (host) in
                     if let url = self.prepareAuthorizationUrl(host: host) {
-                        self.startAuthSession(url: url)
+                        self.startAuthSession(url: url, completion: completion)
                     } else {
-                        self.signInFail(.invalidAuthorizationUrl)
+                        self.signInFail(.invalidAuthorizationUrl, completion: completion)
                     }
                 },
                 fail: {
-                    self.signInFail(.cannotGetDeploymentHost)
+                    self.signInFail(.cannotGetDeploymentHost, completion: completion)
                 })
     }
 
@@ -179,6 +180,32 @@ public class PianoID: NSObject {
                     completion(nil, PianoIDError.cannotGetDeploymentHost)
                 })
     }
+    
+    public func formInfo(aid: String, accessToken: String, formName: String, completion: @escaping (PianoIDFormInfo?, PianoIDError?) -> Void) {
+        getDeploymentHost(
+                success: { (host) in
+                    if let url = self.prepareFormInfoUrl(host: host, formName: formName) {
+                        var request = URLRequest(url: url)
+                        request.httpMethod = "GET"
+                        request.setValue(accessToken, forHTTPHeaderField: "Authorization")
+                        let dataTask = self.urlSession.dataTask(with: request) { (data, response, error) in
+                            if error == nil, let httpResponse = response as? HTTPURLResponse, httpResponse.statusCode == 200, let responseData = data {
+                                if let formInfo = self.parseFormInfo(response: httpResponse, responseData: responseData) {
+                                    completion(formInfo, nil)
+                                    return
+                                }
+                            }
+
+                            completion(nil, PianoIDError.formInfoFailed)
+                        }
+
+                        dataTask.resume()
+                    }
+                },
+                fail: {
+                    completion(nil, PianoIDError.cannotGetDeploymentHost)
+                })
+    }
 
     fileprivate func parseToken(response: URLResponse, responseData: Data) -> PianoIDToken? {
         if let responseObject = JSONSerializationUtil.deserializeResponse(response: response, responseData: responseData) {
@@ -188,6 +215,15 @@ public class PianoID: NSObject {
             }
         }
 
+        return .none
+    }
+    
+    fileprivate func parseFormInfo(response: URLResponse, responseData: Data) -> PianoIDFormInfo? {
+        if let responseObject = JSONSerializationUtil.deserializeResponse(response: response, responseData: responseData) {
+            let hasAllCustomFieldValuesFilled = responseObject["has_all_custom_field_values_filled"] as? Bool ?? false
+            return PianoIDFormInfo(hasAllCustomFieldValuesFilled: hasAllCustomFieldValuesFilled)
+        }
+        
         return .none
     }
 
@@ -294,15 +330,29 @@ public class PianoID: NSObject {
 
         return urlComponents.url
     }
+    
+    private func prepareFormInfoUrl(host: String, formName: String) -> URL? {
+        guard var urlComponents = URLComponents(string: host) else {
+            return nil
+        }
+        
+        urlComponents.path = formInfoPath
+        urlComponents.queryItems = [
+            URLQueryItem(name: "client_id", value: getAID()),
+            URLQueryItem(name: "form_name", value: formName),
+        ]
+        
+        return urlComponents.url
+    }
 
-    private func startAuthSession(url: URL) {
+    private func startAuthSession(url: URL, completion: ((PianoIDSignInResult?, Error?) -> Void)? = nil) {
         if authViewController != nil {
             return
         }
 
         DispatchQueue.main.async {
             if let presentingViewController = self.getPresentingViewController() {
-                let authViewController = PianoIDOAuthViewController(title: "", url: url)
+                let authViewController = PianoIDOAuthViewController(title: "", url: url, completion: completion)
                 presentingViewController.present(authViewController, animated: true, completion: nil)
                 self.authViewController = authViewController
             }
@@ -348,7 +398,7 @@ public class PianoID: NSObject {
         return false
     }
 
-    internal func signInSuccess(_ token: PianoIDToken, _ isNewUser: Bool) {
+    internal func signInSuccess(_ token: PianoIDToken, _ isNewUser: Bool, completion: ((PianoIDSignInResult?, Error?) -> Void)? = nil) {
         _currentToken = token
         _ = PianoIDTokenStorage.shared.saveToken(token, aid: getAID())
 
@@ -356,14 +406,16 @@ public class PianoID: NSObject {
             let result = PianoIDSignInResult(token, isNewUser)
             signInHandler {
                 self.delegate!.signIn!(result: result, withError: nil)
+                completion?(result, nil)
             }
         }
     }
 
-    internal func signInFail(_ error: PianoIDError!) {
+    internal func signInFail(_ error: PianoIDError!, completion: ((PianoIDSignInResult?, Error?) -> Void)? = nil) {
         if (delegate?.signIn != nil) {
             signInHandler {
                 self.delegate!.signIn!(result: nil, withError: error)
+                completion?(nil, error)
             }
         }
     }

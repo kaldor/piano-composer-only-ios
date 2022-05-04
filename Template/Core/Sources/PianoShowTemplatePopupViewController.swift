@@ -1,9 +1,9 @@
-import Foundation
 import WebKit
 
 import PianoCommon
 import PianoComposer
 
+@available(*, deprecated, message: "Use PianoShowTemplateController")
 @objcMembers
 public class PianoShowTemplatePopupViewController: BasePopupViewController {
     
@@ -121,7 +121,7 @@ extension PianoShowTemplatePopupViewController: WKNavigationDelegate {
         }
         
         if navigationAction.navigationType == .linkActivated {
-            UIApplication.shared.openURL(url)
+            UIApplication.shared.open(url, options: [:], completionHandler: nil)
         }
         
         decisionHandler(.cancel)
