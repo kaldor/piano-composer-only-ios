@@ -31,7 +31,7 @@ func showTemplate(composer: PianoComposer, event: XpEvent, params: ShowTemplateE
 
 ### Inline template view
 ```swift
-class MyDelegate: PianoComposerDelegate, ComposerShowTemplateDelegate {
+class MyDelegate: PianoComposerDelegate, PianoShowTemplateDelegate {
 
     var webView: WKWebView
     
