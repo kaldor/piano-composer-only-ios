@@ -102,7 +102,7 @@ public class PianoComposer: NSObject {
     public let pageViewId = ComposerHelper.generatePageViewId()
     public var endpoint: PianoEndpoint
     public var tags: Set<String> = Set<String>()
-    public var customVariables: Dictionary<String, String> = Dictionary<String, String>()
+    public var customVariables: Dictionary<String, Any> = Dictionary<String, Any>()
     public var customParams: CustomParams?
     public var url: String = "/"
     public var referrer: String = ""
@@ -178,6 +178,11 @@ public class PianoComposer: NSObject {
 
     public func customVariable(name: String, value: String) -> PianoComposer {
         customVariables[name] = value
+        return self
+    }
+    
+    public func customVariable(name: String, array: Array<String>) -> PianoComposer {
+        customVariables[name] = array
         return self
     }
 
