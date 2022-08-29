@@ -38,7 +38,7 @@ public class PianoEndpoint: NSObject {
     }
 
     public static var sandbox: PianoEndpoint {
-        PianoEndpoint(api: "https://sandbox.piano.io", composer: "https://c2-sandbox.piano.io")
+        PianoEndpoint(api: "https://sandbox.piano.io", composer: "https://c2.sandbox.piano.io")
     }
 
     public let api: String
@@ -482,9 +482,10 @@ fileprivate func processErrorResult(errorResult: ErrorResult) {
                 case .showForm:
                     let showFormEventParams = ShowFormEventParams(dict: event.eventParams)
                     if showFormEventParams != nil {
-                        showFormEventParams!.trackingId = event.eventExecutionContext?.trackingId
+                        showFormEventParams!.trackingId = event.eventExecutionContext?.trackingId ?? ""
                         showFormEventParams!.aid = aid
                         showFormEventParams!.endpointUrl = getBaseUrl(isExecute: false)
+                        showFormEventParams!.pageViewId = pageViewId
                     }
                     delegate?.showForm?(composer: self, event: event, params: showFormEventParams)
                 case .showRecommendations:

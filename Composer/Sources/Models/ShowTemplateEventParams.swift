@@ -6,7 +6,6 @@ public class ShowTemplateEventParams: TemplateEventParams {
     public let delayBy: DelayBy?
     
     internal(set) public var templateUrl: String = ""
-    internal(set) public var trackingId: String = ""
     internal(set) public var endpointUrl: String = ""
 
     

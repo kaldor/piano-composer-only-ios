@@ -5,10 +5,10 @@ public class ShowFormEventParams: TemplateEventParams {
     public let formName: String
     public let hideCompletedFields: Bool
     
-    internal(set) public var trackingId: String? = nil
-    
     public var aid: String = ""
     public var endpointUrl: String = ""
+    
+    internal(set) public var pageViewId: String = ""
     
     init?(dict: [String: Any]?) {
         guard let d = dict else {

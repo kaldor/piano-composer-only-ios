@@ -48,8 +48,8 @@ public class PianoShowFormController: PianoTemplateController {
             URLQueryItem(name: "hide_if_complete", value: params.hideCompletedFields ? "true" : "false")
         ]
         
-        if let t = params.trackingId {
-            queryItems.append(URLQueryItem(name: "tracking_id", value: t))
+        if !params.trackingId.isEmpty {
+            queryItems.append(URLQueryItem(name: "tracking_id", value: params.trackingId))
         }
         
         if let t = accessToken {
@@ -86,16 +86,19 @@ extension PianoShowFormController: WKScriptMessageHandler {
                 switch e {
                 case EVENT_READY:
                     if let token = accessToken {
+                        ExternalEventService.sharedInstance.logCustomForm(params: params, userToken: accessToken)
                         self.eval("window.PianoIDMobileSDK.messageCallback(JSON.stringify({event: 'setToken', params: '\(token)'}))")
                     }
                 case EVENT_SIGN_IN:
                     self.signIn { token in
+                        ExternalEventService.sharedInstance.logCustomForm(params: self.params, userToken: token)
                         self.accessToken = token
                         self.eval("window.PianoIDMobileSDK.messageCallback(JSON.stringify({event: 'setToken', params: '\(token)'}))")
                     }
                 case EVENT_SKIP:
                     close()
                 case EVENT_SEND:
+                    ExternalEventService.sharedInstance.logCustomForm(params: params, userToken: accessToken, isImpression: false)
                     close()
                 default:
                     return
