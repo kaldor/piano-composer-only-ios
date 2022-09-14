@@ -47,25 +47,24 @@ internal class ExternalEventService {
     }
     
     func logCustomForm(params: ShowFormEventParams, userToken: String?, isImpression: Bool = true) {
-        guard let requestUrl = URL(string: "\(params.endpointUrl)\(isImpression ? impressionLogAction : submissionLogAction)") else {
-           return
+        guard var url = URLComponents(string: "\(params.endpointUrl)\(isImpression ? impressionLogAction : submissionLogAction)") else {
+            return
+        }
+        url.queryItems = [
+            URLQueryItem(name: "aid", value: params.aid),
+            URLQueryItem(name: "tracking_id", value: params.trackingId),
+            URLQueryItem(name: "page_view_id", value: params.pageViewId),
+            URLQueryItem(name: "custom_form_name", value: params.formName),
+            URLQueryItem(name: "custom_form_source", value: "show_form"),
+            URLQueryItem(name: "user_token", value: userToken ?? "")
+        ]
+        
+        guard let requestUrl = url.url else {
+            return
         }
         
-        let requestBody = RequestParamBuilder()
-            .add(name: "aid", value: params.aid)
-            .add(name: "tracking_id", value: params.trackingId)
-            .add(name: "page_view_id", value: params.pageViewId)
-            .add(name: "custom_form_name", value: params.formName)
-            .add(name: "custom_form_source", value: "show_form")
-            .add(name: "user_token", value: userToken ?? "")
-            .build().data(using: String.Encoding.utf8)
-        
         var request = URLRequest(url: requestUrl)
-        request.httpMethod = "POST"
-        request.httpBody = requestBody
-        request.setValue(userAgent, forHTTPHeaderField: "User-Agent")
-        request.setValue("application/x-www-form-urlencoded; charset=utf-8", forHTTPHeaderField: "Content-Type")
-        request.setValue("application/json; charset=utf-8", forHTTPHeaderField: "Accept")
+        request.httpMethod = "GET"
         
         let dataTask = session.dataTask(with: request)
         dataTask.resume()
