@@ -206,6 +206,32 @@ public class PianoID: NSObject {
                     completion(nil, PianoIDError.cannotGetDeploymentHost)
                 })
     }
+    
+    public func userInfo(aid: String, accessToken: String, formName: String, completion: @escaping (PianoIDUserInfo?, PianoIDError?) -> Void) {
+        getDeploymentHost(
+                success: { (host) in
+                    if let url = self.prepareFormInfoUrl(host: host, formName: formName) {
+                        var request = URLRequest(url: url)
+                        request.httpMethod = "GET"
+                        request.setValue(accessToken, forHTTPHeaderField: "Authorization")
+                        let dataTask = self.urlSession.dataTask(with: request) { (data, response, error) in
+                            if error == nil, let httpResponse = response as? HTTPURLResponse, httpResponse.statusCode == 200, let responseData = data {
+                                if let userInfo = self.parseUserInfo(response: httpResponse, responseData: responseData) {
+                                    completion(userInfo, nil)
+                                    return
+                                }
+                            }
+
+                            completion(nil, PianoIDError.userInfoFailed)
+                        }
+
+                        dataTask.resume()
+                    }
+                },
+                fail: {
+                    completion(nil, PianoIDError.cannotGetDeploymentHost)
+                })
+    }
 
     fileprivate func parseToken(response: URLResponse, responseData: Data) -> PianoIDToken? {
         if let responseObject = JSONSerializationUtil.deserializeResponse(response: response, responseData: responseData) {
@@ -222,6 +248,54 @@ public class PianoID: NSObject {
         if let responseObject = JSONSerializationUtil.deserializeResponse(response: response, responseData: responseData) {
             let hasAllCustomFieldValuesFilled = responseObject["has_all_custom_field_values_filled"] as? Bool ?? false
             return PianoIDFormInfo(hasAllCustomFieldValuesFilled: hasAllCustomFieldValuesFilled)
+        }
+        
+        return .none
+    }
+    
+    fileprivate func parseUserInfo(response: URLResponse, responseData: Data) -> PianoIDUserInfo? {
+        if let responseObject = JSONSerializationUtil.deserializeResponse(response: response, responseData: responseData) {
+            var linkedSocialAccounts: PianoIDUserInfoSocialAccounts? = nil
+            if let lsa = responseObject["linked_social_accounts"] as? [String:Any] {
+                linkedSocialAccounts = PianoIDUserInfoSocialAccounts(
+                    facebookLinked: lsa["facebook_linked"] as? Bool ?? false,
+                    googleLinked: lsa["google_linked"] as? Bool ?? false,
+                    twitterLinked: lsa["twitter_linked"] as? Bool ?? false,
+                    linkedInLinked: lsa["linked_in_linked"] as? Bool ?? false,
+                    appleLinked: lsa["apple_linked"] as? Bool ?? false,
+                    passwordAvailable: lsa["password_available"] as? Bool ?? false
+                )
+            }
+            
+            var customFields: [PianoIDUserInfoCustomField] = []
+            if let cfs = responseObject["custom_field_values"] as? [[String:Any]] {
+                cfs.forEach { cf in
+                    customFields.append(
+                        PianoIDUserInfoCustomField(
+                            fieldName: cf["field_name"] as? String ?? "",
+                            value: cf["value"] as? String ?? "",
+                            created: Date(timeIntervalSince1970: cf["created"] as? Double ?? 0),
+                            emailCreator: cf["email_creator"] as? String,
+                            sortOrder: cf["sort_order"] as? Int64 ?? 0
+                        )
+                    )
+                }
+            }
+            
+            return PianoIDUserInfo(
+                email: responseObject["email"] as? String ?? "",
+                uid: responseObject["uid"] as? String ?? "",
+                firstName: responseObject["first_name"] as? String ?? "",
+                lastName: responseObject["last_name"] as? String ?? "",
+                aid: responseObject["aid"] as? String ?? "",
+                updated: Date(timeIntervalSince1970: responseObject["updated"] as? Double ?? 0),
+                linkedSocialAccounts: linkedSocialAccounts,
+                customFields: customFields,
+                allCustomFieldValuesFilled: responseObject["has_all_custom_field_values_filled"] as? Bool ?? false,
+                needResendConfirmationEmail: responseObject["need_resend_confirmation_email"] as? Bool ?? false,
+                changedEmail: responseObject["changed_email"] as? Bool ?? false,
+                passwordless: responseObject["passwordless"] as? Bool ?? false
+            )
         }
         
         return .none
