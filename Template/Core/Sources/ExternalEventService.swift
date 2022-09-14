@@ -53,7 +53,7 @@ internal class ExternalEventService {
         url.queryItems = [
             URLQueryItem(name: "aid", value: params.aid),
             URLQueryItem(name: "tracking_id", value: params.trackingId),
-            URLQueryItem(name: "page_view_id", value: params.pageViewId),
+            URLQueryItem(name: "pageview_id", value: params.pageViewId),
             URLQueryItem(name: "custom_form_name", value: params.formName),
             URLQueryItem(name: "custom_form_source", value: "show_form"),
             URLQueryItem(name: "user_token", value: userToken ?? "")
