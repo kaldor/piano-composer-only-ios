@@ -230,6 +230,19 @@ func signOut(withError error: Error!);
 func cancel();
 ```
 
+##### User information
+To get user information, use the function ```PianoID.userInfo```
+```swift
+PianoID.shared.userInfo(aid: params.aid, accessToken: t.accessToken, formName: params.formName) { result, err in
+    if let e = err {
+        // handle error
+        return
+    }
+    
+    // handle user information result
+}
+```
+
 #### Piano accounts user provider **(deprecated)**
 ##### Usage
 ```swift

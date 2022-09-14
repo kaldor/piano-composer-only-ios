@@ -1,5 +1,9 @@
 # Piano SDK for iOS
 
+## v2.5.2
+* [PianoID] - Added getting user information
+* [PianoTemplate] - Added custom form tracking
+
 ## v2.5.1
 * [PianoComposer] - Added support accessToken for CDN
 * [PianoComposer] - Added support forms
