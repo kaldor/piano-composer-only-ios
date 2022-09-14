@@ -233,7 +233,7 @@ func cancel();
 ##### User information
 To get user information, use the function ```PianoID.userInfo```
 ```swift
-PianoID.shared.userInfo(aid: params.aid, accessToken: t.accessToken, formName: params.formName) { result, err in
+PianoID.shared.userInfo(aid: "<YOUR_AID>", accessToken: "<USER_ACCESS_TOKEN>", formName: "<FORM_NAME>") { result, err in
     if let e = err {
         // handle error
         return
