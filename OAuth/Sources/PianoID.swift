@@ -32,6 +32,7 @@ public class PianoID: NSObject {
     public var deploymentHost: String = ""
     public var signUpEnabled = false
     public var widgetType: WidgetType = .login
+    public var stage = ""
     public var presentingViewController: UIViewController?
 
     public var googleClientId: String = ""
@@ -349,6 +350,10 @@ public class PianoID: NSObject {
             URLQueryItem(name: "is_sdk", value: "\(true)"),
             URLQueryItem(name: "redirect_uri", value: redirectURI),
         ]
+        
+        if !stage.isEmpty {
+            queryItems.append(URLQueryItem(name: "stage", value: stage))
+        }
 
         var nativeOAuthProviders: [String] = []
         nativeOAuthProviders.append(SocialOAuthProvider.google.description)
