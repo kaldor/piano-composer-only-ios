@@ -9,6 +9,8 @@ public class XpEventExecutionContext: NSObject {
     
     public let trackingId: String
     
+    public let userSegments: UserSegments?
+    
     fileprivate(set) public var splitTestEntries: Array<SplitTestEntry>
     
     public let currentMeterName: String
@@ -30,6 +32,12 @@ public class XpEventExecutionContext: NSObject {
         currentMeterName = dict["currentMeterName"] as? String ?? ""
         region = dict["region"] as? String ?? ""
         countryCode = dict["countryCode"] as? String ?? ""
+        
+        if let d = dict["userSegments"] {
+            userSegments = UserSegments(dict: d)
+        } else {
+            userSegments = nil
+        }
             
         splitTestEntries = Array<SplitTestEntry>()
         if let splitTestArray = dict["splitTests"] as? [Any] {

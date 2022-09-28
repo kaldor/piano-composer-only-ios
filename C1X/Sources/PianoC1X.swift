@@ -29,15 +29,15 @@ import CxenseSDK
     /// - Parameters:
     ///   - composer: PianoComposer instance
     public required init(composer: PianoComposer) throws {
-        if composer.url.isEmpty {
-            throw PianoError("URL is empty")
+        guard let location = PianoC1X.getLocation(composer: composer) else {
+            throw PianoError("URL or Content Id is empty")
         }
         
         _ = composer.browserId(Cxense.getPersistentCookie())
         
         let eventQuery = PageViewEvent.Query(
             siteId: PianoC1X.configuration?.siteId ?? "",
-            location: composer.url,
+            location: location,
             referrer: composer.referrer
         )
         
@@ -63,7 +63,14 @@ import CxenseSDK
             
             let eventBuilder = PageViewEventBuilder
                 .makeBuilder(withName: composer.pageViewId, siteId: PianoC1X.configuration?.siteId ?? "")
-                .setLocation(loc: composer.url)
+            
+            if !composer.url.isEmpty {
+                _ = eventBuilder.setLocation(loc: composer.url)
+            }
+            
+            if !composer.contentId.isEmpty {
+                _ = eventBuilder.setContentId(cid: composer.contentId)
+            }
             
             if !composer.referrer.isEmpty {
                 _ = eventBuilder.setReferrer(ref: composer.referrer)
@@ -103,5 +110,15 @@ import CxenseSDK
             renderTemplateUrl: renderTemplateUrl,
             userId: Cxense.getPersistentCookie()
         )
+    }
+    
+    private class func getLocation(composer: PianoComposer) -> String? {
+        if !composer.url.isEmpty {
+            return composer.url
+        }
+        if !composer.contentId.isEmpty {
+            return composer.contentId
+        }
+        return nil
     }
 }

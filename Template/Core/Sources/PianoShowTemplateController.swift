@@ -49,6 +49,7 @@ public class PianoShowTemplateController: PianoTemplateController {
     
     override func onClose() {
         ExternalEventService.sharedInstance.logExternalEvent(endpointUrl: params.endpointUrl, trackingId: params.trackingId, eventType: "EXTERNAL_EVENT", eventGroupId: "close", customParams: "{}")
+        self.delegate?.onClose?(eventData: "")
     }
 }
 

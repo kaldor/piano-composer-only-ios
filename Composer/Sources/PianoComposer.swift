@@ -102,11 +102,16 @@ public class PianoComposer: NSObject {
     public let pageViewId = ComposerHelper.generatePageViewId()
     public var endpoint: PianoEndpoint
     public var tags: Set<String> = Set<String>()
+    public var keywords: Set<String> = Set<String>()
     public var customVariables: Dictionary<String, Any> = Dictionary<String, Any>()
     public var customParams: CustomParams?
     public var url: String = "/"
     public var referrer: String = ""
     public var zoneId: String = ""
+    public var title: String = ""
+    public var desc: String = ""
+    public var contentId: String = ""
+    public var contentType: String = ""
     public var debug: Bool = false
     public var userToken: String = ""
     public var contentCreated: String = ""
@@ -175,6 +180,19 @@ public class PianoComposer: NSObject {
 
         return self
     }
+    
+    public func keyword(_ keyword: String) -> PianoComposer {
+        keywords.insert(keyword)
+        return self
+    }
+
+    public func keywords(_ keywordCollection: Array<String>) -> PianoComposer {
+        for keyword in keywordCollection {
+            keywords.insert(keyword)
+        }
+
+        return self
+    }
 
     public func customVariable(name: String, value: String) -> PianoComposer {
         customVariables[name] = value
@@ -213,6 +231,26 @@ public class PianoComposer: NSObject {
 
     public func zoneId(_ zoneId: String) -> PianoComposer {
         self.zoneId = zoneId
+        return self
+    }
+
+    public func title(_ title: String) -> PianoComposer {
+        self.title = title
+        return self
+    }
+
+    public func description(_ description: String) -> PianoComposer {
+        self.desc = description
+        return self
+    }
+
+    public func contentId(_ contentId: String) -> PianoComposer {
+        self.contentId = contentId
+        return self
+    }
+
+    public func contentType(_ contentType: String) -> PianoComposer {
+        self.contentType = contentType
         return self
     }
 
@@ -403,10 +441,15 @@ public class PianoComposer: NSObject {
                 .add(name: "url", value: url)
                 .add(name: "referer", value: referrer)
                 .add(name: "tags", value: tags.joined(separator: ","))
+                .add(name: "keywords", value: keywords.joined(separator: ","))
                 .add(name: "pageview_id", value: pageViewId)
                 .add(name: "visit_id", value: visitTuple.visitId)
                 .add(name: "new_visit", value: "\(visitTuple.isNew)")
                 .add(name: "zone", value: zoneId)
+                .add(name: "title", value: title)
+                .add(name: "description", value: desc)
+                .add(name: "content_id", value: contentId)
+                .add(name: "content_type", value: contentType)
                 .add(name: "submit_type", value: submitType)
                 .add(name: "content_created", value: contentCreated)
                 .add(name: "content_author", value: contentAuthor)
