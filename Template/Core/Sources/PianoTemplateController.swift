@@ -46,7 +46,7 @@ public class PianoTemplateController: NSObject {
         }
     }
     
-    @objc func close() {
+    @objc public func close() {
         if let m = modalViewController {
             m.close()
         }
