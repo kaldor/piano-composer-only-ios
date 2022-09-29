@@ -33,7 +33,7 @@ public class XpEventExecutionContext: NSObject {
         region = dict["region"] as? String ?? ""
         countryCode = dict["countryCode"] as? String ?? ""
         
-        if let d = dict["userSegments"] {
+        if let d = dict["userSegments"] as? [String:Any] {
             userSegments = UserSegments(dict: d)
         } else {
             userSegments = nil

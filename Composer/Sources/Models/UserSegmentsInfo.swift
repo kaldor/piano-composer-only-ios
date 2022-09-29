@@ -9,6 +9,6 @@ public class UserSegmentsInfo: NSObject {
     
     init(dict: [String: Any]) {
         segments = dict["segments"] as? [String] ?? []
-        expiresAt = Date(timeIntervalSince1970: dict["expiresAt"] ?? 0)
+        expiresAt = Date(timeIntervalSince1970: dict["expiresAt"] as? Double ?? 0)
     }
 }
