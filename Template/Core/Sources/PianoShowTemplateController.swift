@@ -60,8 +60,7 @@ extension PianoShowTemplateController: WKScriptMessageHandler {
         DispatchQueue.main.async {
             switch handlerType {
             case .close:
-                ExternalEventService.sharedInstance.logExternalEvent(endpointUrl: self.params.endpointUrl, trackingId: self.params.trackingId, eventType: "EXTERNAL_EVENT", eventGroupId: "close", customParams: "{}")
-                self.delegate?.onClose?(eventData: message.body)
+                self.close()
             case .closeAndRefresh:
                 self.delegate?.onCloseAndRefresh?(eventData: message.body)
             case .register:
