@@ -49,9 +49,9 @@ public class PianoTemplateController: NSObject {
     @objc public func close() {
         if let m = modalViewController {
             m.close()
+        } else {
+            onClose()
         }
-        
-        onClose()
     }
     
     @objc func eval(_ js: String) {
