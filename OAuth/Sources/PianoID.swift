@@ -182,7 +182,7 @@ public class PianoID: NSObject {
                 })
     }
     
-    public func formInfo(aid: String, accessToken: String, formName: String, completion: @escaping (PianoIDFormInfo?, PianoIDError?) -> Void) {
+    public func formInfo(aid: String, accessToken: String, formName: String? = nil, completion: @escaping (PianoIDFormInfo?, PianoIDError?) -> Void) {
         getDeploymentHost(
                 success: { (host) in
                     if let url = self.prepareFormInfoUrl(host: host, formName: formName) {
@@ -410,16 +410,22 @@ public class PianoID: NSObject {
         return urlComponents.url
     }
     
-    private func prepareFormInfoUrl(host: String, formName: String) -> URL? {
+    private func prepareFormInfoUrl(host: String, formName: String?) -> URL? {
         guard var urlComponents = URLComponents(string: host) else {
             return nil
         }
         
         urlComponents.path = formInfoPath
-        urlComponents.queryItems = [
-            URLQueryItem(name: "client_id", value: getAID()),
-            URLQueryItem(name: "form_name", value: formName),
+        
+        var queryItems = [
+            URLQueryItem(name: "client_id", value: getAID())
         ]
+        
+        if let f = formName {
+            queryItems.append(URLQueryItem(name: "form_name", value: f))
+        }
+        
+        urlComponents.queryItems = queryItems
         
         return urlComponents.url
     }

@@ -6,6 +6,8 @@ public class PianoShowTemplateController: PianoTemplateController {
     
     private let params: ShowTemplateEventParams
     
+    private var userContentController: WKUserContentController? = nil
+    
     public weak var delegate: PianoShowTemplateDelegate? {
         didSet {
             self.inlineDelegate = delegate
@@ -25,19 +27,21 @@ public class PianoShowTemplateController: PianoTemplateController {
             return nil
         }
         
-        let userContentController = webView.configuration.userContentController
-        userContentController.removeScriptMessageHandler(forName: JSMessageHandlerType.close.description)
-        userContentController.removeScriptMessageHandler(forName: JSMessageHandlerType.closeAndRefresh.description)
-        userContentController.removeScriptMessageHandler(forName: JSMessageHandlerType.register.description)
-        userContentController.removeScriptMessageHandler(forName: JSMessageHandlerType.login.description)
-        userContentController.removeScriptMessageHandler(forName: JSMessageHandlerType.logout.description)
-        userContentController.removeScriptMessageHandler(forName: JSMessageHandlerType.customEvent.description)
-        userContentController.add(self, name: JSMessageHandlerType.close.description)
-        userContentController.add(self, name: JSMessageHandlerType.closeAndRefresh.description)
-        userContentController.add(self, name: JSMessageHandlerType.register.description)
-        userContentController.add(self, name: JSMessageHandlerType.login.description)
-        userContentController.add(self, name: JSMessageHandlerType.logout.description)
-        userContentController.add(self, name: JSMessageHandlerType.customEvent.description)
+        let uc = webView.configuration.userContentController
+        uc.removeScriptMessageHandler(forName: JSMessageHandlerType.close.description)
+        uc.removeScriptMessageHandler(forName: JSMessageHandlerType.closeAndRefresh.description)
+        uc.removeScriptMessageHandler(forName: JSMessageHandlerType.register.description)
+        uc.removeScriptMessageHandler(forName: JSMessageHandlerType.login.description)
+        uc.removeScriptMessageHandler(forName: JSMessageHandlerType.logout.description)
+        uc.removeScriptMessageHandler(forName: JSMessageHandlerType.customEvent.description)
+        uc.add(self, name: JSMessageHandlerType.close.description)
+        uc.add(self, name: JSMessageHandlerType.closeAndRefresh.description)
+        uc.add(self, name: JSMessageHandlerType.register.description)
+        uc.add(self, name: JSMessageHandlerType.login.description)
+        uc.add(self, name: JSMessageHandlerType.logout.description)
+        uc.add(self, name: JSMessageHandlerType.customEvent.description)
+        
+        userContentController = uc
         
         return PianoTemplateRequestLoader(request: URLRequest(url: url))
     }
@@ -45,9 +49,17 @@ public class PianoShowTemplateController: PianoTemplateController {
     public func reloadWithToken(userToken: String) {
         eval("piano.reloadTemplateWithUserToken('\(userToken)')")
     }
-
     
     override func onClose() {
+        if let uc = userContentController {
+            uc.removeScriptMessageHandler(forName: JSMessageHandlerType.close.description)
+            uc.removeScriptMessageHandler(forName: JSMessageHandlerType.closeAndRefresh.description)
+            uc.removeScriptMessageHandler(forName: JSMessageHandlerType.register.description)
+            uc.removeScriptMessageHandler(forName: JSMessageHandlerType.login.description)
+            uc.removeScriptMessageHandler(forName: JSMessageHandlerType.logout.description)
+            uc.removeScriptMessageHandler(forName: JSMessageHandlerType.customEvent.description)
+        }
+        
         ExternalEventService.sharedInstance.logExternalEvent(endpointUrl: params.endpointUrl, trackingId: params.trackingId, eventType: "EXTERNAL_EVENT", eventGroupId: "close", customParams: "{}")
         self.delegate?.onClose?(eventData: "")
     }

@@ -1,5 +1,6 @@
 import WebKit
 
+import PianoCommon
 import PianoComposer
 
 internal protocol PianoTemplateLoader {
@@ -23,7 +24,7 @@ internal class PianoTemplateRequestLoader: NSObject, PianoTemplateLoader {
     }
 }
 
-public class PianoTemplateController: NSObject {
+public class PianoTemplateController: NSObject, PianoEventDelegate {
     
     private let templateParams: TemplateEventParams
     
@@ -49,9 +50,9 @@ public class PianoTemplateController: NSObject {
     @objc public func close() {
         if let m = modalViewController {
             m.close()
-        } else {
-            onClose()
         }
+        
+        onClose()
     }
     
     @objc func eval(_ js: String) {
@@ -68,6 +69,10 @@ public class PianoTemplateController: NSObject {
         case .modal:
             modalViewController?.eval(js)
         }
+    }
+    
+    public func onEvent(event: PianoEvent?) {
+        onClose()
     }
     
     private func showTemplate() {
@@ -88,7 +93,7 @@ public class PianoTemplateController: NSObject {
         
         if templateParams.displayMode == .modal {
             modalViewController = PianoTemplateModalViewController(loader: loader, params: templateParams, webView: webView)
-            modalViewController!.onClose = onClose
+            modalViewController!.closeDelegate = self
             
             asyncWithDelay {
                 self.modalViewController!.show()

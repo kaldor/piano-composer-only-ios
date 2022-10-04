@@ -16,7 +16,7 @@ public class PianoTemplateModalViewController: BasePopupViewController {
     
     public var activityIndicator: UIActivityIndicatorView!
     
-    public var onClose: (() -> Void)? = nil
+    public weak var closeDelegate: PianoEventDelegate? = nil
     
     internal init(loader: PianoTemplateLoader, params: TemplateEventParams, webView: WKWebView) {
         self.loader = loader
@@ -68,8 +68,9 @@ public class PianoTemplateModalViewController: BasePopupViewController {
     
     public override func close() {
         super.close()
+        
         DispatchQueue.main.async {
-            self.onClose?()
+            self.closeDelegate?.onEvent(event: nil)
         }
     }
     
