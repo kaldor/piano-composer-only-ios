@@ -64,12 +64,10 @@ import CxenseSDK
             let eventBuilder = PageViewEventBuilder
                 .makeBuilder(withName: composer.pageViewId, siteId: PianoC1X.configuration?.siteId ?? "")
             
-            if !composer.url.isEmpty {
-                _ = eventBuilder.setLocation(loc: composer.url)
-            }
-            
             if !composer.contentId.isEmpty {
                 _ = eventBuilder.setContentId(cid: composer.contentId)
+            } else if !composer.url.isEmpty {
+                _ = eventBuilder.setLocation(loc: composer.url)
             }
             
             if !composer.referrer.isEmpty {
