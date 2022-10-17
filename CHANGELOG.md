@@ -1,5 +1,8 @@
 # Piano SDK for iOS
 
+## v2.5.3
+* [PianoComposer] - Added request parameters (title, description, etc...)
+
 ## v2.5.2
 * [PianoID] - Added getting user information
 * [PianoTemplate] - Added custom form tracking
