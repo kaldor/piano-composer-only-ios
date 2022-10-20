@@ -47,7 +47,7 @@ class MyDelegate: PianoComposerDelegate, PianoShowTemplateDelegate {
             return
         }
         
-        let controller = PianoShowTemplateController(params: p)
+        let controller = PianoShowTemplateController(p)
         controller.delegate = self
         controller.show()
     }
