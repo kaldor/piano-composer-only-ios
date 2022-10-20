@@ -1,5 +1,8 @@
 # Piano SDK for iOS
 
+## v2.5.4
+* [PianoTemplate] - Fixed memory leak
+
 ## v2.5.3
 * [PianoComposer] - Added request parameters (title, description, etc...)
 

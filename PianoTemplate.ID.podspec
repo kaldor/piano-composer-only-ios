@@ -1,6 +1,6 @@
 Pod::Spec.new do |s|
   s.name         = 'PianoTemplate.ID'
-  s.version      = '2.5.3'
+  s.version      = '2.5.4'
   s.swift_version = '5.5'
   s.summary      = 'Enables iOS apps to use ID templates by Piano.io'
   s.homepage     = 'https://gitlab.com/piano-public/sdk/ios/package'
