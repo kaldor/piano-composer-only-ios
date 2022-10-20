@@ -33,13 +33,13 @@ func showTemplate(composer: PianoComposer, event: XpEvent, params: ShowTemplateE
 ```swift
 class MyDelegate: PianoComposerDelegate, PianoShowTemplateDelegate {
 
-    var webView: WKWebView
+    var view: PianoInlineView
     
     func findViewBySelector(selector: String) -> UIView? {
         guard selector == "my_selector_name" else {
             return nil
         }
-        return webView
+        return view
     }
 
     func showTemplate(composer: PianoComposer, event: XpEvent, params: ShowTemplateEventParams?) {

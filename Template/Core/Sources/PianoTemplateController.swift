@@ -58,14 +58,10 @@ public class PianoTemplateController: NSObject, PianoEventDelegate {
     @objc func eval(_ js: String) {
         switch templateParams.displayMode {
         case .inline:
-            guard let view = inlineDelegate?.findViewBySelector(selector: templateParams.containerSelector) else {
+            guard let view = inlineDelegate?.findViewBySelector(selector: templateParams.containerSelector) as? WKWebView else {
                 return
             }
-            
-            if view is WKWebView {
-                let wkWebView = (view as! WKWebView)
-                wkWebView.evaluateJavaScript(js)
-            }
+            view.evaluateJavaScript(js)
         case .modal:
             modalViewController?.eval(js)
         }
@@ -78,11 +74,15 @@ public class PianoTemplateController: NSObject, PianoEventDelegate {
     private func showTemplate() {
         var webView: WKWebView
         if templateParams.displayMode == .inline {
-            guard let wv = inlineDelegate?.findViewBySelector(selector: templateParams.containerSelector) as? WKWebView else {
+            guard let view = inlineDelegate?.findViewBySelector(selector: templateParams.containerSelector) as? WKWebView else {
                 return
             }
             
-            webView = wv
+            if let pv = view as? PianoInlineView {
+                pv.closeEvent = self
+            }
+            
+            webView = view
         } else {
             webView = WKWebView(frame: .zero)
         }
@@ -119,4 +119,11 @@ public class PianoTemplateController: NSObject, PianoEventDelegate {
     }
 }
 
-
+public class PianoInlineView : WKWebView {
+    
+    public weak var closeEvent: PianoEventDelegate?
+    
+    deinit {
+        closeEvent?.onEvent(event: nil)
+    }
+}

@@ -22,6 +22,8 @@ public class PianoShowFormController: PianoTemplateController {
     private let params: ShowFormEventParams
     private let signIn: (_: @escaping (_: String) -> Void) -> Void
     
+    private var userContentController: WKUserContentController? = nil
+    
     public var accessToken: String? = nil
     
     public weak var delegate: PianoTemplateInlineDelegate? {
@@ -65,15 +67,24 @@ public class PianoShowFormController: PianoTemplateController {
         var request = URLRequest(url: url)
         request.httpMethod = "GET"
         
-        webView.configuration.userContentController.removeAllUserScripts()
-        webView.configuration.userContentController.removeScriptMessageHandler(forName: JS_HANDLER_POST_MESSAGE)
+        var uc = webView.configuration.userContentController
+        uc.removeAllUserScripts()
+        uc.removeScriptMessageHandler(forName: JS_HANDLER_POST_MESSAGE)
         
-        webView.configuration.userContentController.add(self, name: JS_HANDLER_POST_MESSAGE)
-        webView.configuration.userContentController.addUserScript(
+        uc.add(self, name: JS_HANDLER_POST_MESSAGE)
+        uc.addUserScript(
             WKUserScript(source: INIT_SCRIPT, injectionTime: .atDocumentStart, forMainFrameOnly: false)
         )
         
+        userContentController = uc
+        
         return PianoTemplateRequestLoader(request: request)
+    }
+    
+    override func onClose() {
+        if let uc = userContentController {
+            uc.removeScriptMessageHandler(forName: JS_HANDLER_POST_MESSAGE)
+        }
     }
 }
 
