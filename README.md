@@ -53,11 +53,11 @@ Add the following lines to your `Podfile`.
 ```
 use_frameworks!
 
-pod 'PianoComposer', '~> 2.5.1'
-pod 'PianoTemplate', '~> 2.5.1'
-pod 'PianoTemplate.ID', '~> 2.5.1'
-pod 'PianoOAuth', '~> 2.5.1'
-pod 'PianoC1X', '~> 2.5.1'
+pod 'PianoComposer', '~> 2.5.4'
+pod 'PianoTemplate', '~> 2.5.4'
+pod 'PianoTemplate.ID', '~> 2.5.4'
+pod 'PianoOAuth', '~> 2.5.4'
+pod 'PianoC1X', '~> 2.5.4'
 ```
 
 Then run `pod install`. For details of the installation and usage of CocoaPods, visit [official web site](https://cocoapods.org/).
@@ -67,7 +67,7 @@ Add the components you need from the repository:
 
 **URL:** https://gitlab.com/piano-public/sdk/ios/package
 
-**Version:** 2.5.0
+**Version:** 2.5.4
 
 ## PianoComposer Usage
 
