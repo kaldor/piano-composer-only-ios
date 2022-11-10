@@ -51,11 +51,11 @@ public class PianoIDUserInfo: NSObject {
 @objcMembers
 public class PianoIDUserInfoCustomField: NSObject {
     
-    let fieldName: String
-    let fieldValue: String
-    let created: Date
-    let emailCreator: String?
-    let sortOrder: Int64
+    public let fieldName: String
+    public let fieldValue: String
+    public let created: Date
+    public let emailCreator: String?
+    public let sortOrder: Int64
     
     internal init(
         fieldName: String,
