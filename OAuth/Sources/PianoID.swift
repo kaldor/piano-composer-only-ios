@@ -263,10 +263,18 @@ public class PianoID: NSObject {
                     request.setValue(accessToken, forHTTPHeaderField: "Authorization")
                     request.setValue("application/json", forHTTPHeaderField: "Content-Type")
                     
+                    let fields: [[String:Any]] = customFields.map { k,v in
+                        [
+                            "field_name": k,
+                            "value": v
+                        ]
+                    }
+                    
                     let body : [String:Any] = [
                         "form_name": formName,
-                        "custom_field_values": customFields
+                        "custom_field_values": fields
                     ]
+                    
                     request.httpBody = JSONSerializationUtil.serializeObjectToJSONData(object: body)
                     
                     let dataTask = self.urlSession.dataTask(with: request) { (data, response, error) in
@@ -276,7 +284,6 @@ public class PianoID: NSObject {
                                 return
                             }
                         }
-
                         completion(nil, PianoIDError.userInfoFailed)
                     }
 
