@@ -6,7 +6,6 @@ public class ShowFormEventParams: TemplateEventParams {
     public let hideCompletedFields: Bool
     
     public var aid: String = ""
-    public var endpointUrl: String = ""
     
     internal(set) public var pageViewId: String = ""
     

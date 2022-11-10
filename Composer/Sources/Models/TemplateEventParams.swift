@@ -9,6 +9,7 @@ public class TemplateEventParams: NSObject {
     public let containerSelector: String
     public let showCloseButton: Bool
     
+    internal(set) public var endpointUrl: String = ""
     internal(set) public var trackingId: String = ""
     
     internal init(d: [String: Any]) {

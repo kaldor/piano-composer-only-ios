@@ -84,40 +84,42 @@ public class PianoID: NSObject {
 
     public func signIn(completion: ((PianoIDSignInResult?, Error?) -> Void)? = nil) {
         getDeploymentHost(
-                success: { (host) in
-                    if let url = self.prepareAuthorizationUrl(host: host) {
-                        self.startAuthSession(url: url, completion: completion)
-                    } else {
-                        self.signInFail(.invalidAuthorizationUrl, completion: completion)
-                    }
-                },
-                fail: {
-                    self.signInFail(.cannotGetDeploymentHost, completion: completion)
-                })
+            success: { (host) in
+                if let url = self.prepareAuthorizationUrl(host: host) {
+                    self.startAuthSession(url: url, completion: completion)
+                } else {
+                    self.signInFail(.invalidAuthorizationUrl, completion: completion)
+                }
+            },
+            fail: {
+                self.signInFail(.cannotGetDeploymentHost, completion: completion)
+            }
+        )
     }
 
     fileprivate func passwordlessSignIn(code: String) {
         getDeploymentHost(
-                success: { (host) in
-                    if let url = self.preparePasswrodlessUrl(host: host, code: code) {
-                        var request = URLRequest(url: url)
-                        request.httpMethod = "POST"
-                        request.setValue("application/json", forHTTPHeaderField: "Content-Type")
-                        let dataTask = self.urlSession.dataTask(with: request) { (data, response, error) in
-                            if error == nil, let httpResponse = response as? HTTPURLResponse, httpResponse.statusCode == 200, let responseData = data {
-                                if let token = self.parseToken(response: response!, responseData: responseData) {
-                                    self.signInSuccess(token, false)
-                                    return
-                                }
+            success: { (host) in
+                if let url = self.preparePasswrodlessUrl(host: host, code: code) {
+                    var request = URLRequest(url: url)
+                    request.httpMethod = "POST"
+                    request.setValue("application/json", forHTTPHeaderField: "Content-Type")
+                    let dataTask = self.urlSession.dataTask(with: request) { (data, response, error) in
+                        if error == nil, let httpResponse = response as? HTTPURLResponse, httpResponse.statusCode == 200, let responseData = data {
+                            if let token = self.parseToken(response: response!, responseData: responseData) {
+                                self.signInSuccess(token, false)
+                                return
                             }
                         }
-
-                        dataTask.resume()
                     }
-                },
-                fail: {
-                    self.signInFail(.cannotGetDeploymentHost)
-                })
+
+                    dataTask.resume()
+                }
+            },
+            fail: {
+                self.signInFail(.cannotGetDeploymentHost)
+            }
+        )
     }
 
     public func signOut(token: String) {
@@ -125,113 +127,175 @@ public class PianoID: NSObject {
         PianoIDTokenStorage.shared.removeToken(aid: getAID())
 
         getDeploymentHost(
-                success: { (host) in
-                    if let url = self.prepareSignOutUrl(host: host, token: token) {
-                        var request = URLRequest(url: url)
-                        request.httpMethod = "GET"
+            success: { (host) in
+                if let url = self.prepareSignOutUrl(host: host, token: token) {
+                    var request = URLRequest(url: url)
+                    request.httpMethod = "GET"
 
-                        let dataTask = self.urlSession.dataTask(with: request) { (data, response, error) in
-                            if error == nil, let httpResponse = response as? HTTPURLResponse, httpResponse.statusCode == 200 {
-                                self.signOutSuccess()
-                            } else {
-                                self.signOutFail()
-                            }
+                    let dataTask = self.urlSession.dataTask(with: request) { (data, response, error) in
+                        if error == nil, let httpResponse = response as? HTTPURLResponse, httpResponse.statusCode == 200 {
+                            self.signOutSuccess()
+                        } else {
+                            self.signOutFail()
                         }
-
-                        dataTask.resume()
                     }
-                },
-                fail: {
-                    self.signOutFail()
-                })
+
+                    dataTask.resume()
+                }
+            },
+            fail: {
+                self.signOutFail()
+            }
+        )
     }
 
     public func refreshToken(_ refreshToken: String, completion: @escaping (PianoIDToken?, PianoIDError?) -> Void) {
         getDeploymentHost(
-                success: { (host) in
-                    if let url = self.prepareRefreshTokenUrl(host: host) {
-                        let body: [String: Any] = [
-                            "client_id": self.getAID(),
-                            "grant_type": "refresh_token",
-                            "refresh_token": refreshToken
-                        ]
+            success: { (host) in
+                if let url = self.prepareRefreshTokenUrl(host: host) {
+                    let body: [String: Any] = [
+                        "client_id": self.getAID(),
+                        "grant_type": "refresh_token",
+                        "refresh_token": refreshToken
+                    ]
 
-                        var request = URLRequest(url: url)
-                        request.httpMethod = "POST"
-                        request.setValue("application/json", forHTTPHeaderField: "Content-Type")
-                        request.httpBody = JSONSerializationUtil.serializeObjectToJSONData(object: body)
-                        let dataTask = self.urlSession.dataTask(with: request) { (data, response, error) in
-                            if error == nil, let httpResponse = response as? HTTPURLResponse, httpResponse.statusCode == 200, let responseData = data {
-                                if let token = self.parseToken(response: response!, responseData: responseData) {
-                                    self._currentToken = token
-                                    _ = PianoIDTokenStorage.shared.saveToken(token, aid: self.getAID())
-                                    
-                                    completion(token, nil)
-                                    return
-                                }
+                    var request = URLRequest(url: url)
+                    request.httpMethod = "POST"
+                    request.setValue("application/json", forHTTPHeaderField: "Content-Type")
+                    request.httpBody = JSONSerializationUtil.serializeObjectToJSONData(object: body)
+                    let dataTask = self.urlSession.dataTask(with: request) { (data, response, error) in
+                        if error == nil, let httpResponse = response as? HTTPURLResponse, httpResponse.statusCode == 200, let responseData = data {
+                            if let token = self.parseToken(response: response!, responseData: responseData) {
+                                self._currentToken = token
+                                _ = PianoIDTokenStorage.shared.saveToken(token, aid: self.getAID())
+                                
+                                completion(token, nil)
+                                return
                             }
-
-                            completion(nil, PianoIDError.refreshFailed)
                         }
 
-                        dataTask.resume()
+                        completion(nil, PianoIDError.refreshFailed)
                     }
-                },
-                fail: {
-                    completion(nil, PianoIDError.cannotGetDeploymentHost)
-                })
+
+                    dataTask.resume()
+                }
+            },
+            fail: {
+                completion(nil, PianoIDError.cannotGetDeploymentHost)
+            }
+        )
     }
     
     public func formInfo(aid: String, accessToken: String, formName: String? = nil, completion: @escaping (PianoIDFormInfo?, PianoIDError?) -> Void) {
         getDeploymentHost(
-                success: { (host) in
-                    if let url = self.prepareFormInfoUrl(host: host, formName: formName) {
-                        var request = URLRequest(url: url)
-                        request.httpMethod = "GET"
-                        request.setValue(accessToken, forHTTPHeaderField: "Authorization")
-                        let dataTask = self.urlSession.dataTask(with: request) { (data, response, error) in
-                            if error == nil, let httpResponse = response as? HTTPURLResponse, httpResponse.statusCode == 200, let responseData = data {
-                                if let formInfo = self.parseFormInfo(response: httpResponse, responseData: responseData) {
-                                    completion(formInfo, nil)
-                                    return
-                                }
+            success: { (host) in
+                if let url = self.prepareFormInfoUrl(host: host, aid: aid, formName: formName) {
+                    var request = URLRequest(url: url)
+                    request.httpMethod = "GET"
+                    request.setValue(accessToken, forHTTPHeaderField: "Authorization")
+                    let dataTask = self.urlSession.dataTask(with: request) { (data, response, error) in
+                        if error == nil, let httpResponse = response as? HTTPURLResponse, httpResponse.statusCode == 200, let responseData = data {
+                            if let formInfo = self.parseFormInfo(response: httpResponse, responseData: responseData) {
+                                completion(formInfo, nil)
+                                return
                             }
-
-                            completion(nil, PianoIDError.formInfoFailed)
                         }
 
-                        dataTask.resume()
+                        completion(nil, PianoIDError.formInfoFailed)
                     }
-                },
-                fail: {
-                    completion(nil, PianoIDError.cannotGetDeploymentHost)
-                })
+
+                    dataTask.resume()
+                }
+            },
+            fail: {
+                completion(nil, PianoIDError.cannotGetDeploymentHost)
+            }
+        )
+    }
+    
+    public func formInfo(accessToken: String, formName: String? = nil, completion: @escaping (PianoIDFormInfo?, PianoIDError?) -> Void) {
+        formInfo(aid: getAID(), accessToken: accessToken, completion: completion)
     }
     
     public func userInfo(aid: String, accessToken: String, formName: String, completion: @escaping (PianoIDUserInfo?, PianoIDError?) -> Void) {
         getDeploymentHost(
-                success: { (host) in
-                    if let url = self.prepareFormInfoUrl(host: host, formName: formName) {
-                        var request = URLRequest(url: url)
-                        request.httpMethod = "GET"
-                        request.setValue(accessToken, forHTTPHeaderField: "Authorization")
-                        let dataTask = self.urlSession.dataTask(with: request) { (data, response, error) in
-                            if error == nil, let httpResponse = response as? HTTPURLResponse, httpResponse.statusCode == 200, let responseData = data {
-                                if let userInfo = self.parseUserInfo(response: httpResponse, responseData: responseData) {
-                                    completion(userInfo, nil)
-                                    return
-                                }
+            success: { (host) in
+                if let url = self.prepareFormInfoUrl(host: host, aid: aid, formName: formName) {
+                    var request = URLRequest(url: url)
+                    request.httpMethod = "GET"
+                    request.setValue(accessToken, forHTTPHeaderField: "Authorization")
+                    let dataTask = self.urlSession.dataTask(with: request) { (data, response, error) in
+                        if error == nil, let httpResponse = response as? HTTPURLResponse, httpResponse.statusCode == 200, let responseData = data {
+                            if let userInfo = self.parseUserInfo(response: httpResponse, responseData: responseData) {
+                                completion(userInfo, nil)
+                                return
                             }
-
-                            completion(nil, PianoIDError.userInfoFailed)
                         }
 
-                        dataTask.resume()
+                        completion(nil, PianoIDError.userInfoFailed)
                     }
-                },
-                fail: {
-                    completion(nil, PianoIDError.cannotGetDeploymentHost)
-                })
+
+                    dataTask.resume()
+                }
+            },
+            fail: {
+                completion(nil, PianoIDError.cannotGetDeploymentHost)
+            }
+        )
+    }
+    
+    public func userInfo(accessToken: String, formName: String, completion: @escaping (PianoIDUserInfo?, PianoIDError?) -> Void) {
+        userInfo(aid: getAID(), accessToken: accessToken, formName: formName, completion: completion)
+    }
+    
+    public func putUserInfo(
+        aid: String,
+        accessToken: String,
+        formName: String,
+        customFields: [String:String],
+        completion: @escaping (PianoIDUserInfo?, PianoIDError?) -> Void
+    ) {
+        getDeploymentHost(
+            success: { (host) in
+                if let url = self.prepareUpdateUserInfoUrl(host: host, aid: aid) {
+                    var request = URLRequest(url: url)
+                    request.httpMethod = "PUT"
+                    request.setValue(accessToken, forHTTPHeaderField: "Authorization")
+                    request.setValue("application/json", forHTTPHeaderField: "Content-Type")
+                    
+                    let body : [String:Any] = [
+                        "form_name": formName,
+                        "custom_field_values": customFields
+                    ]
+                    request.httpBody = JSONSerializationUtil.serializeObjectToJSONData(object: body)
+                    
+                    let dataTask = self.urlSession.dataTask(with: request) { (data, response, error) in
+                        if error == nil, let httpResponse = response as? HTTPURLResponse, httpResponse.statusCode == 200, let responseData = data {
+                            if let userInfo = self.parseUserInfo(response: httpResponse, responseData: responseData) {
+                                completion(userInfo, nil)
+                                return
+                            }
+                        }
+
+                        completion(nil, PianoIDError.userInfoFailed)
+                    }
+
+                    dataTask.resume()
+                }
+            },
+            fail: {
+                completion(nil, PianoIDError.cannotGetDeploymentHost)
+            }
+        )
+    }
+    
+    public func putUserInfo(
+        accessToken: String,
+        formName: String,
+        customFields: [String:String],
+        completion: @escaping (PianoIDUserInfo?, PianoIDError?) -> Void
+    ) {
+        putUserInfo(aid: getAID(), accessToken: accessToken, formName: formName, customFields: customFields, completion: completion)
     }
 
     fileprivate func parseToken(response: URLResponse, responseData: Data) -> PianoIDToken? {
@@ -256,18 +320,6 @@ public class PianoID: NSObject {
     
     fileprivate func parseUserInfo(response: URLResponse, responseData: Data) -> PianoIDUserInfo? {
         if let responseObject = JSONSerializationUtil.deserializeResponse(response: response, responseData: responseData) {
-            var linkedSocialAccounts: PianoIDUserInfoSocialAccounts? = nil
-            if let lsa = responseObject["linked_social_accounts"] as? [String:Any] {
-                linkedSocialAccounts = PianoIDUserInfoSocialAccounts(
-                    facebookLinked: lsa["facebook_linked"] as? Bool ?? false,
-                    googleLinked: lsa["google_linked"] as? Bool ?? false,
-                    twitterLinked: lsa["twitter_linked"] as? Bool ?? false,
-                    linkedInLinked: lsa["linked_in_linked"] as? Bool ?? false,
-                    appleLinked: lsa["apple_linked"] as? Bool ?? false,
-                    passwordAvailable: lsa["password_available"] as? Bool ?? false
-                )
-            }
-            
             var customFields: [PianoIDUserInfoCustomField] = []
             if let cfs = responseObject["custom_field_values"] as? [[String:Any]] {
                 cfs.forEach { cf in
@@ -290,7 +342,8 @@ public class PianoID: NSObject {
                 lastName: responseObject["last_name"] as? String ?? "",
                 aid: responseObject["aid"] as? String ?? "",
                 updated: Date(timeIntervalSince1970: responseObject["updated"] as? Double ?? 0),
-                linkedSocialAccounts: linkedSocialAccounts,
+                linkedSocialAccounts: responseObject["linked_social_accounts"] as? [String] ?? [],
+                passwordAvailable: (responseObject["password_available"] as? Bool) ?? false,
                 customFields: customFields,
                 allCustomFieldValuesFilled: responseObject["has_all_custom_field_values_filled"] as? Bool ?? false,
                 needResendConfirmationEmail: responseObject["need_resend_confirmation_email"] as? Bool ?? false,
@@ -410,7 +463,7 @@ public class PianoID: NSObject {
         return urlComponents.url
     }
     
-    private func prepareFormInfoUrl(host: String, formName: String?) -> URL? {
+    private func prepareFormInfoUrl(host: String, aid: String, formName: String?) -> URL? {
         guard var urlComponents = URLComponents(string: host) else {
             return nil
         }
@@ -418,7 +471,7 @@ public class PianoID: NSObject {
         urlComponents.path = formInfoPath
         
         var queryItems = [
-            URLQueryItem(name: "client_id", value: getAID())
+            URLQueryItem(name: "client_id", value: aid)
         ]
         
         if let f = formName {
@@ -426,6 +479,20 @@ public class PianoID: NSObject {
         }
         
         urlComponents.queryItems = queryItems
+        
+        return urlComponents.url
+    }
+    
+    private func prepareUpdateUserInfoUrl(host: String, aid: String) -> URL? {
+        guard var urlComponents = URLComponents(string: host) else {
+            return nil
+        }
+        
+        urlComponents.path = formInfoPath
+        
+        urlComponents.queryItems = [
+            URLQueryItem(name: "aid", value: aid)
+        ]
         
         return urlComponents.url
     }

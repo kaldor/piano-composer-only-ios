@@ -9,7 +9,8 @@ public class PianoIDUserInfo: NSObject {
     public let lastName: String
     public let aid: String
     public let updated: Date
-    public let linkedSocialAccounts: PianoIDUserInfoSocialAccounts?
+    public let linkedSocialAccounts: [String]
+    public let passwordAvailable: Bool
     public let customFields: [PianoIDUserInfoCustomField]
     public let allCustomFieldValuesFilled: Bool
     public let needResendConfirmationEmail: Bool
@@ -23,7 +24,8 @@ public class PianoIDUserInfo: NSObject {
         lastName: String,
         aid: String,
         updated: Date,
-        linkedSocialAccounts: PianoIDUserInfoSocialAccounts?,
+        linkedSocialAccounts: [String],
+        passwordAvailable: Bool,
         customFields: [PianoIDUserInfoCustomField],
         allCustomFieldValuesFilled: Bool,
         needResendConfirmationEmail: Bool,
@@ -37,38 +39,12 @@ public class PianoIDUserInfo: NSObject {
         self.aid = aid
         self.updated = updated
         self.linkedSocialAccounts = linkedSocialAccounts
+        self.passwordAvailable = passwordAvailable
         self.customFields = customFields
         self.allCustomFieldValuesFilled = allCustomFieldValuesFilled
         self.needResendConfirmationEmail = needResendConfirmationEmail
         self.changedEmail = changedEmail
         self.passwordless = passwordless
-    }
-}
-
-@objcMembers
-public class PianoIDUserInfoSocialAccounts: NSObject {
-    
-    let facebookLinked: Bool
-    let googleLinked: Bool
-    let twitterLinked: Bool
-    let linkedInLinked: Bool
-    let appleLinked: Bool
-    let passwordAvailable: Bool
-    
-    internal init(
-        facebookLinked: Bool,
-        googleLinked: Bool,
-        twitterLinked: Bool,
-        linkedInLinked: Bool,
-        appleLinked: Bool,
-        passwordAvailable: Bool
-    ) {
-        self.facebookLinked = facebookLinked
-        self.googleLinked = googleLinked
-        self.twitterLinked = twitterLinked
-        self.linkedInLinked = linkedInLinked
-        self.appleLinked = appleLinked
-        self.passwordAvailable = passwordAvailable
     }
 }
 

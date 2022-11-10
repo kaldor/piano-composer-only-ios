@@ -1,10 +1,8 @@
 import Foundation
 
-import PianoComposer
-
-internal class ExternalEventService {
+public class PianoTrackingService {
     
-    internal static let sharedInstance = ExternalEventService()
+    public static let shared = PianoTrackingService()
     
     fileprivate let userAgent = ComposerHelper.generateUserAgent()
     fileprivate let externalLogAction = "/api/v3/conversion/logAutoMicroConversion"
@@ -13,7 +11,7 @@ internal class ExternalEventService {
     fileprivate let session: URLSession
     
     fileprivate init() {
-        session = ExternalEventService.createSession()
+        session = PianoTrackingService.createSession()
     }
     
     fileprivate static func createSession() -> URLSession {
@@ -23,7 +21,7 @@ internal class ExternalEventService {
         return URLSession(configuration: config)
     }
     
-    func logExternalEvent(endpointUrl: String, trackingId: String, eventType: String, eventGroupId: String, customParams: String) {
+    private func trackExternalEvent(endpointUrl: String, trackingId: String, eventType: String, eventGroupId: String, customParams: String) {
         guard let requestUrl = URL(string: "\(endpointUrl)\(externalLogAction)") else {
            return
         }
@@ -46,7 +44,7 @@ internal class ExternalEventService {
         dataTask.resume()
     }
     
-    func logCustomForm(params: ShowFormEventParams, userToken: String?, isImpression: Bool = true) {
+    public func trackCustomForm(params: ShowFormEventParams, userToken: String?, isImpression: Bool = true) {
         guard var url = URLComponents(string: "\(params.endpointUrl)\(isImpression ? impressionLogAction : submissionLogAction)") else {
             return
         }
@@ -68,5 +66,58 @@ internal class ExternalEventService {
         
         let dataTask = session.dataTask(with: request)
         dataTask.resume()
+    }
+    
+    public func trackCloseEvent(endpointUrl: String, trackingId: String) {
+        trackExternalEvent(
+            endpointUrl: endpointUrl,
+            trackingId: trackingId,
+            eventType: "EXTERNAL_EVENT",
+            eventGroupId: "close",
+            customParams: "{}"
+        )
+    }
+    
+    
+    public func trackCloseEvent(params: TemplateEventParams) {
+        trackCloseEvent(
+            endpointUrl: params.endpointUrl,
+            trackingId: params.trackingId
+        )
+    }
+    
+    
+    public func trackRecommendationsDisplay(endpointUrl: String, trackingId: String) {
+        trackExternalEvent(
+            endpointUrl: endpointUrl,
+            trackingId: trackingId,
+            eventType: "EXTERNAL_LINK",
+            eventGroupId: "init",
+            customParams: "{\"source\":\"CX\"}"
+        )
+    }
+    
+    public func trackRecommendationsDisplay(params: TemplateEventParams) {
+        trackRecommendationsDisplay(
+            endpointUrl: params.endpointUrl,
+            trackingId: params.trackingId
+        )
+    }
+    
+    public func trackRecommendationsClick(endpointUrl: String, trackingId: String) {
+        trackExternalEvent(
+            endpointUrl: endpointUrl,
+            trackingId: trackingId,
+            eventType: "EXTERNAL_LINK",
+            eventGroupId: "click",
+            customParams: "{\"source\":\"CX\"}"
+        )
+    }
+    
+    public func trackRecommendationsClick(params: TemplateEventParams) {
+        trackRecommendationsDisplay(
+            endpointUrl: params.endpointUrl,
+            trackingId: params.trackingId
+        )
     }
 }

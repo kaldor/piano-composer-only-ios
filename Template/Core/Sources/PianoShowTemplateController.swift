@@ -60,7 +60,7 @@ public class PianoShowTemplateController: PianoTemplateController {
             uc.removeScriptMessageHandler(forName: JSMessageHandlerType.customEvent.description)
         }
         
-        ExternalEventService.sharedInstance.logExternalEvent(endpointUrl: params.endpointUrl, trackingId: params.trackingId, eventType: "EXTERNAL_EVENT", eventGroupId: "close", customParams: "{}")
+        PianoTrackingService.shared.trackCloseEvent(params: params)
         self.delegate?.onClose?(eventData: "")
     }
 }

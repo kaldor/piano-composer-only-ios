@@ -294,6 +294,11 @@ public class PianoComposer: NSObject {
         return self
     }
 
+    /* Tracking */
+    public func trackCloseEvent(trackingId: String) {
+
+    }
+
     /**
         Start experiences executing
     */
@@ -497,7 +502,7 @@ public class PianoComposer: NSObject {
         }
     }
 
-fileprivate func processErrorResult(errorResult: ErrorResult) {
+    fileprivate func processErrorResult(errorResult: ErrorResult) {
         guard !errorResult.errors.isEmpty else {
             return
         }
@@ -518,6 +523,7 @@ fileprivate func processErrorResult(errorResult: ErrorResult) {
                     let showTemplateEventParams = ShowTemplateEventParams(dict: event.eventParams)
                     if showTemplateEventParams != nil {
                         showTemplateEventParams!.endpointUrl = getBaseUrl(isExecute: false)
+                        showTemplateEventParams!.trackingId = event.eventExecutionContext?.trackingId ?? ""
                         showTemplateEventParams!.templateUrl = buildTemplateUrl(event: event, params: showTemplateEventParams!)
                         showTemplateEventParams!.trackingId = event.eventExecutionContext?.trackingId ?? ""
                     }
@@ -525,6 +531,7 @@ fileprivate func processErrorResult(errorResult: ErrorResult) {
                 case .showForm:
                     let showFormEventParams = ShowFormEventParams(dict: event.eventParams)
                     if showFormEventParams != nil {
+                        showFormEventParams!.endpointUrl = getBaseUrl(isExecute: false)
                         showFormEventParams!.trackingId = event.eventExecutionContext?.trackingId ?? ""
                         showFormEventParams!.aid = aid
                         showFormEventParams!.endpointUrl = getBaseUrl(isExecute: false)
@@ -532,7 +539,12 @@ fileprivate func processErrorResult(errorResult: ErrorResult) {
                     }
                     delegate?.showForm?(composer: self, event: event, params: showFormEventParams)
                 case .showRecommendations:
-                    delegate?.showRecommendations?(composer: self, event: event, params: ShowRecommendationsEventParams(dict: event.eventParams))
+                    let showRecommendationsEventParams = ShowRecommendationsEventParams(dict: event.eventParams)
+                    if showRecommendationsEventParams != nil {
+                        showRecommendationsEventParams!.endpointUrl = getBaseUrl(isExecute: false)
+                        showRecommendationsEventParams!.trackingId = event.eventExecutionContext?.trackingId ?? ""
+                    }
+                    delegate?.showRecommendations?(composer: self, event: event, params: showRecommendationsEventParams)
                 case .setResponseVariable:
                     delegate?.setResponseVariable?(composer: self, event: event, params: SetResponseVariableParams(dict: event.eventParams))
                 case .nonSite:
