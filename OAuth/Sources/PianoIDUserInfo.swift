@@ -52,7 +52,7 @@ public class PianoIDUserInfo: NSObject {
 public class PianoIDUserInfoCustomField: NSObject {
     
     let fieldName: String
-    let value: String
+    let fieldValue: String
     let created: Date
     let emailCreator: String?
     let sortOrder: Int64
@@ -65,7 +65,7 @@ public class PianoIDUserInfoCustomField: NSObject {
         sortOrder: Int64
     ) {
         self.fieldName = fieldName
-        self.value = value
+        self.fieldValue = value
         self.created = created
         self.emailCreator = emailCreator
         self.sortOrder = sortOrder
