@@ -91,7 +91,7 @@ public class PianoTrackingService {
         trackExternalEvent(
             endpointUrl: endpointUrl,
             trackingId: trackingId,
-            eventType: "EXTERNAL_LINK",
+            eventType: "EXTERNAL_EVENT",
             eventGroupId: "init",
             customParams: "{\"source\":\"CX\"}"
         )
