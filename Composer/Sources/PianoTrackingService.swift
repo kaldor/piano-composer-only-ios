@@ -104,20 +104,21 @@ public class PianoTrackingService {
         )
     }
     
-    public func trackRecommendationsClick(endpointUrl: String, trackingId: String) {
+    public func trackRecommendationsClick(endpointUrl: String, trackingId: String, url: String? = nil) {
         trackExternalEvent(
             endpointUrl: endpointUrl,
             trackingId: trackingId,
             eventType: "EXTERNAL_LINK",
             eventGroupId: "click",
-            customParams: "{\"source\":\"CX\"}"
+            customParams: "{\"source\":\"CX\"\(url != nil ? ",\"href\":\"\(url!)\"" : "")}"
         )
     }
     
-    public func trackRecommendationsClick(params: TemplateEventParams) {
-        trackRecommendationsDisplay(
+    public func trackRecommendationsClick(params: TemplateEventParams, url: String? = nil) {
+        trackRecommendationsClick(
             endpointUrl: params.endpointUrl,
-            trackingId: params.trackingId
+            trackingId: params.trackingId,
+            url: url
         )
     }
 }
