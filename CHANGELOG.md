@@ -1,5 +1,9 @@
 # Piano SDK for iOS
 
+## v2.5.5
+* [PianoOAuth] - Added function for update user info
+* [PianoComposer] - Added tracking functions
+
 ## v2.5.4
 * [PianoTemplate] - Fixed memory leak
 
