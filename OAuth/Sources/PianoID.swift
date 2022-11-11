@@ -278,8 +278,13 @@ public class PianoID: NSObject {
                     request.httpBody = JSONSerializationUtil.serializeObjectToJSONData(object: body)
                     
                     let dataTask = self.urlSession.dataTask(with: request) { (data, response, error) in
-                        if error == nil, let httpResponse = response as? HTTPURLResponse, httpResponse.statusCode == 200, let responseData = data {
-                            if let userInfo = self.parseUserInfo(response: httpResponse, responseData: responseData) {
+                        if error == nil, let httpResponse = response as? HTTPURLResponse {
+                            if httpResponse.statusCode != 200 {
+                                completion(nil, httpResponse.statusCode == 400 ? PianoIDError.userInfoValidationFailed : PianoIDError.userInfoFailed)
+                                return
+                            }
+                            
+                            if let responseData = data, let userInfo = self.parseUserInfo(response: httpResponse, responseData: responseData) {
                                 completion(userInfo, nil)
                                 return
                             }

@@ -12,6 +12,7 @@ public enum PianoIDError: Int, Error, CustomStringConvertible {
     case facebookSignInFailed = -7
     case formInfoFailed = -8
     case userInfoFailed = -9
+    case userInfoValidationFailed = -10
     
     public var description: String {
         switch self {
@@ -33,6 +34,8 @@ public enum PianoIDError: Int, Error, CustomStringConvertible {
                 return "Form information failed"
             case .userInfoFailed:
                 return "User information failed"
+            case .userInfoValidationFailed:
+                return "User information validation failed"
         }
     }
 }
