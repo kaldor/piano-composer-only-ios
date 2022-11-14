@@ -3,7 +3,7 @@ import Foundation
 @objcMembers
 public class PianoIDToken: NSObject, NSSecureCoding {
                 
-    public static let supportsSecureCoding = false
+    public static let supportsSecureCoding = true
     
     public let accessToken: String
     public let refreshToken: String
