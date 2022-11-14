@@ -11,7 +11,7 @@ class PianoIDTokenStorage: NSObject {
     func saveToken(_ token: PianoIDToken, aid: String) -> Bool {
         removeToken(aid: aid)
         
-        let tokenData = try! NSKeyedArchiver.archivedData(withRootObject: token, requiringSecureCoding: false)
+        let tokenData = try! NSKeyedArchiver.archivedData(withRootObject: token, requiringSecureCoding: true)
         let query: [String: Any] = [
             kSecClass as String: kSecClassGenericPassword,
             kSecAttrGeneric as String: tokenKey,
