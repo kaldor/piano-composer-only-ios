@@ -37,7 +37,7 @@ let package = Package(
     dependencies: [
         .package(name: "GoogleSignIn", url: "https://github.com/google/GoogleSignIn-iOS", .upToNextMinor(from: "6.2.4")),
         .package(name: "Facebook", url: "https://github.com/facebook/facebook-ios-sdk", .upToNextMinor(from: "15.1.0")),
-        .package(name: "CxenseSDK", url: "https://github.com/cXense/cxense-spm.git", .upToNextMinor(from: "1.9.10"))
+        .package(name: "CxenseSDK", url: "https://github.com/cXense/cxense-spm.git", .upToNextMinor(from: "1.9.11"))
     ],
     targets: [
         /// Common
