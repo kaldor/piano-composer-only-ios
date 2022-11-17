@@ -1,7 +1,7 @@
 Pod::Spec.new do |s|
   s.name         = 'PianoOAuth'
   s.version      = '2.6.0'
-  s.swift_version = '5.5'
+  s.swift_version = '5.7'
   s.summary      = 'Enables iOS apps to sign in with Piano.io'
   s.homepage     = 'https://gitlab.com/piano-public/sdk/ios/package'
   s.license      = { :type => 'Apache License, Version 2.0', :file => 'LICENSE' }
