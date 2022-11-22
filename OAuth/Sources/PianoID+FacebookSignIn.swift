@@ -7,26 +7,28 @@ extension PianoID {
     internal func facebookSignIn() {
         DispatchQueue.main.async {
             FBSDKLoginKit.LoginManager().logIn(
-                permissions: [.publicProfile, .email],
-                viewController: self.authViewController,
-                completion: self.facebookSignInCompleted
-            )
-        }
-    }
-    
-    @available(tvOS, unavailable)
-    private func facebookSignInCompleted(result: LoginResult) {
-        switch result {
-        case .cancelled:
-            signInCancel()
-        case .failed(let error):
-            handleFacebookError(error)
-        case .success(_, _, let token):
-            guard let tokenString = token?.tokenString else {
-                signInFail(.facebookSignInFailed)
-                return
+                permissions: ["public_profile", "email"],
+                from: self.authViewController
+            ) { result, error in
+                if let e = error {
+                    self.handleFacebookError(e)
+                    return
+                }
+                
+                if let r = result {
+                    if r.isCancelled {
+                        self.signInCancel()
+                        return
+                    }
+                    
+                    if let t = r.token?.tokenString {
+                        self.handleFacebook(token: t)
+                        return
+                    }
+                }
+                
+                self.signInFail(.facebookSignInFailed)
             }
-            handleFacebook(token: tokenString)
         }
     }
     

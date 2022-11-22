@@ -1,8 +1,10 @@
 import Foundation
 
 @objcMembers
-public class PianoIDToken: NSObject, NSCoding {
+public class PianoIDToken: NSObject, NSSecureCoding {
                 
+    public static let supportsSecureCoding = true
+    
     public let accessToken: String
     public let refreshToken: String
     public let expiresIn: Int64
@@ -40,5 +42,5 @@ public class PianoIDToken: NSObject, NSCoding {
     public func encode(with coder: NSCoder) {
         coder.encode(accessToken, forKey: "access_token")
         coder.encode(refreshToken, forKey: "refresh_token")
-    }           
+    }
 }
