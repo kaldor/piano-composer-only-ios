@@ -1,5 +1,10 @@
 # Piano SDK for iOS
 
+## v2.6.0
+* Updated minimum requirements for iOS version to 12.0
+* Updated minimum requirements for Swift version to 5.7
+* [PianoOAuth] - Updated Facebook and Google sign-in components
+
 ## v2.5.5
 * [PianoOAuth] - Added function for update user info
 * [PianoComposer] - Added tracking functions
