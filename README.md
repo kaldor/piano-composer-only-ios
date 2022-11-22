@@ -40,9 +40,9 @@ Piano SDK includes dynamic frameworks written in Swift.
 This document details the process of integrating the Piano SDK with your iOS application. If you have any questions, don't hesitate to email us at support@piano.io.
 
 ## Requirements
-- iOS 10.0+
-- Xcode 13.0
-- Swift 5.5
+- iOS 12.0+
+- Xcode 14.0
+- Swift 5.7
 
 ## Installation
 
@@ -53,11 +53,11 @@ Add the following lines to your `Podfile`.
 ```
 use_frameworks!
 
-pod 'PianoComposer', '~> 2.5.5'
-pod 'PianoTemplate', '~> 2.5.5'
-pod 'PianoTemplate.ID', '~> 2.5.5'
-pod 'PianoOAuth', '~> 2.5.5'
-pod 'PianoC1X', '~> 2.5.5'
+pod 'PianoComposer', '~> 2.6.0'
+pod 'PianoTemplate', '~> 2.6.0'
+pod 'PianoTemplate.ID', '~> 2.6.0'
+pod 'PianoOAuth', '~> 2.6.0'
+pod 'PianoC1X', '~> 2.6.0'
 ```
 
 Then run `pod install`. For details of the installation and usage of CocoaPods, visit [official web site](https://cocoapods.org/).
@@ -67,7 +67,7 @@ Add the components you need from the repository:
 
 **URL:** https://gitlab.com/piano-public/sdk/ios/package
 
-**Version:** 2.5.5
+**Version:** 2.6.0
 
 ## PianoComposer Usage
 
