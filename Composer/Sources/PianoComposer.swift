@@ -38,7 +38,7 @@ public class PianoEndpoint: NSObject {
     }
 
     public static var sandbox: PianoEndpoint {
-        PianoEndpoint(api: "https://sandbox.piano.io", composer: "https://c2.sandbox.piano.io")
+        PianoEndpoint(api: "https://sandbox.piano.io", composer: "https://c2-sandbox.piano.io")
     }
 
     public let api: String
