@@ -21,7 +21,7 @@ public class PianoIDApplicationDelegate: NSObject {
         return handled
     }
 
-    public func application(_ application: UIApplication, open url: URL, sourceApplication: String?, annotation: Any) -> Bool {
+    public func application(_ application: UIApplication, open url: URL, sourceApplication: String?, annotation: Any?) -> Bool {
         var handled = PianoID.shared.handleUrl(url)
         
         if (!handled) {

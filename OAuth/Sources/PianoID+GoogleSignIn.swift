@@ -25,39 +25,9 @@ extension PianoID {
                     self.authViewController?.socialSignInCallback(aid: self.getAID(), oauthProvider: "google", socialToken: token)
                 }
             }
-//
-//            GoogleSignIn.GIDSignIn.sharedInstance.clientID = self.googleClientId
-//            GoogleSignIn.GIDSignIn.sharedInstance.scopes = ["profile", "email"]
-//            GoogleSignIn.GIDSignIn.sharedInstance.delegate = self
-            
-            
         }
     }
-    
-//    private func handleGoogle(token: String) {
-//        authViewController?.socialSignInCallback(aid: getAID(), oauthProvider: "google", socialToken: token)
-//    }
-//
-//    private func handleGoogleError(_ error: NSError) {
-//        if error.code == GIDSignInErrorCode.canceled.rawValue {
-//            signInCancel()
-//        } else {
-//            logError("Google sign in failed with error \(error)")
-//            signInFail(.googleSignInFailed)
-//        }
-//    }
 }
-
-//extension PianoID: GoogleSignIn.GIDSignInDelegate {
-//    
-//    public func sign(_ signIn: GIDSignIn!, didSignInFor user: GIDGoogleUser!, withError error: Error!) {
-//        if error == nil {
-//            handleGoogle(token: user.authentication.idToken)
-//        } else {
-//            handleGoogleError(error as NSError)
-//        }
-//    }
-//}
 
 extension PianoIDApplicationDelegate {
     
@@ -65,7 +35,7 @@ extension PianoIDApplicationDelegate {
         return GoogleSignIn.GIDSignIn.sharedInstance.handle(url)
     }
 
-    internal func googleApplication(_ application: UIApplication, open url: URL, sourceApplication: String?, annotation: Any) -> Bool {
+    internal func googleApplication(_ application: UIApplication, open url: URL, sourceApplication: String?, annotation: Any?) -> Bool {
         return GoogleSignIn.GIDSignIn.sharedInstance.handle(url)
     }
 

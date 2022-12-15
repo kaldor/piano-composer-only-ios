@@ -171,10 +171,20 @@ func application(_ app: UIApplication, open url: URL, options: [UIApplication.Op
 }
 
 ```
-For iOS 8 and older  you must implement the  deprecated ```application(_:open:sourceApplication:annotation:)``` method of your app delegate
+For SwiftUI (iOS 14+) you must implement the ```onOpenURL(perform)``` method of your ContentView
 ```swift
-func application(_ application: UIApplication, open url: URL, sourceApplication: String?, annotation: Any) -> Bool {
-    return PianoOAuth.PianoIDApplicationDelegate.shared.application(application, open: url, sourceApplication: sourceApplication, annotation: annotation)
+@available(iOS 14.0, *)
+struct MyApp: App {
+    
+    ...
+    
+    var body: some Scene {
+        WindowGroup {
+            ContentView().onOpenURL { url in
+                PianoIDApplicationDelegate.shared.application(UIApplication.shared, open: url, sourceApplication: nil, annotation: nil)
+            }
+        }
+    }
 }
 ```
 

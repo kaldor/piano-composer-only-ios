@@ -49,7 +49,7 @@ extension PianoIDApplicationDelegate {
         FBSDKLoginKit.ApplicationDelegate.shared.application(application, didFinishLaunchingWithOptions: launchOptions)
     }        
 
-    internal func facebookApplication(_ application: UIApplication, open url: URL, sourceApplication: String?, annotation: Any) -> Bool {
+    internal func facebookApplication(_ application: UIApplication, open url: URL, sourceApplication: String?, annotation: Any?) -> Bool {
         return FBSDKLoginKit.ApplicationDelegate.shared.application(application, open: url, sourceApplication: sourceApplication, annotation: annotation)
     }
 
