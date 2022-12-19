@@ -169,6 +169,7 @@ Also you must implement the ```application(_:open:options:)``` method of your ap
 func application(_ app: UIApplication, open url: URL, options: [UIApplication.OpenURLOptionsKey : Any] = [:]) -> Bool {
     return PianoOAuth.PianoIDApplicationDelegate.shared.application(app, open: url, options: options)
 }
+```
 
 For SceneDelegate(iOS 13+) implement ```scene(_,openURLContexts)``` method:
 ```swift
