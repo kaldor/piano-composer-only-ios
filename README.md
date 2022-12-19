@@ -191,7 +191,6 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 }
 ```
 
-```
 For SwiftUI (iOS 14+) you must implement the ```onOpenURL(perform)``` method of your ContentView
 ```swift
 @available(iOS 14.0, *)
