@@ -170,6 +170,27 @@ func application(_ app: UIApplication, open url: URL, options: [UIApplication.Op
     return PianoOAuth.PianoIDApplicationDelegate.shared.application(app, open: url, options: options)
 }
 
+For SceneDelegate(iOS 13+) implement ```scene(_,openURLContexts)``` method:
+```swift
+class SceneDelegate: UIResponder, UIWindowSceneDelegate {
+
+    ...
+
+    func scene(_ scene: UIScene, openURLContexts URLContexts: Set<UIOpenURLContext>) {
+        guard let url = URLContexts.first?.url else {
+            return
+        }
+
+        _ = PianoIDApplicationDelegate.shared.application(
+            UIApplication.shared,
+            open: url,
+            sourceApplication: nil,
+            annotation: [UIApplication.OpenURLOptionsKey.annotation]
+        )
+    }
+}
+```
+
 ```
 For SwiftUI (iOS 14+) you must implement the ```onOpenURL(perform)``` method of your ContentView
 ```swift
@@ -226,6 +247,7 @@ func application(_ application: UIApplication, didFinishLaunchingWithOptions lau
     return true
 }
 ```
+
 Also you should configure your application as described here: https://developers.facebook.com/docs/swift/register-your-app#configuresettings
 
 ##### Passwordless Login in SDK
@@ -250,6 +272,25 @@ PianoID.shared.userInfo(aid: "<YOUR_AID>", accessToken: "<USER_ACCESS_TOKEN>", f
     }
     
     // handle user information result
+}
+```
+
+For update user information, use the function ```PianoID.putUserInfo```
+```swift
+putUserInfo(
+    aid: "<AID>",
+    accessToken: "<USER_ACCESS_TOKEN>",
+    formName: "<FORM_NAME>",
+    customFields: [
+        "<FIELD_NAME>": "<FIELD_VALUE>"
+    ]
+) { result, error in
+    if let error {
+        // handle error
+        return
+    }
+    
+    // handle updated user information result
 }
 ```
 
