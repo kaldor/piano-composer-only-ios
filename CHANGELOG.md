@@ -1,5 +1,8 @@
 # Piano SDK for iOS
 
+## v2.6.1
+* Fixes for iOS 13+
+
 ## v2.6.0
 * Updated minimum requirements for iOS version to 12.0
 * Updated minimum requirements for Swift version to 5.7
