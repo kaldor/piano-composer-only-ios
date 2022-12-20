@@ -53,11 +53,11 @@ Add the following lines to your `Podfile`.
 ```
 use_frameworks!
 
-pod 'PianoComposer', '~> 2.6.0'
-pod 'PianoTemplate', '~> 2.6.0'
-pod 'PianoTemplate.ID', '~> 2.6.0'
-pod 'PianoOAuth', '~> 2.6.0'
-pod 'PianoC1X', '~> 2.6.0'
+pod 'PianoComposer', '~> 2.6.1'
+pod 'PianoTemplate', '~> 2.6.1'
+pod 'PianoTemplate.ID', '~> 2.6.1'
+pod 'PianoOAuth', '~> 2.6.1'
+pod 'PianoC1X', '~> 2.6.1'
 ```
 
 Then run `pod install`. For details of the installation and usage of CocoaPods, visit [official web site](https://cocoapods.org/).
@@ -67,7 +67,7 @@ Add the components you need from the repository:
 
 **URL:** https://gitlab.com/piano-public/sdk/ios/package
 
-**Version:** 2.6.0
+**Version:** 2.6.1
 
 ## PianoComposer Usage
 
@@ -292,22 +292,6 @@ putUserInfo(
     
     // handle updated user information result
 }
-```
-
-#### Piano accounts user provider **(deprecated)**
-##### Usage
-```swift
-let vc = PianoOAuthPopupViewController(aid: "<PUBLISHER_AID>") // for piano accounts user provider
-...
-vc.delegate = someDelegate // conform PianoOAuthDelegate protocol
-vc.signUpEnabled = true // makes "sign up" button enabled (default: false)
-vc.widgetType = .login // widget type (possible values: ".login", ".register")
-vc.showPopup()
-```
-##### PianoOAuthDelegate protocol
-```swift
-func loginSucceeded(accessToken: String)
-func loginCancelled() 
 ```
 
 ## Cxense integration
