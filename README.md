@@ -154,6 +154,7 @@ PianoID requires a custom URL Scheme to be added to your project. To add: open y
 
 Set ```io.piano.id.<PUBLISHER_AID_LOWERCASE>```
 as URL schemes. For example:
+
 <img src="./Images/url_types.png" alt="Url scheme example" width="446"/>
 
 To enable social sign in, you must configure the PianoID shared instance before usage.
