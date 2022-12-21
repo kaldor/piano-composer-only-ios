@@ -66,7 +66,7 @@ Add the components you need from the repository:
 
 **URL:** https://gitlab.com/piano-public/sdk/ios/package
 
-**Version:** 2.6.1
+**Version:** 2.6.2
 
 ## PianoComposer Usage
 

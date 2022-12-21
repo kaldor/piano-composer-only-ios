@@ -18,6 +18,13 @@ use_frameworks!
 pod 'PianoC1X', '~>2.6.2'
 ```
 
+### [Swift Package Manager](https://developer.apple.com/documentation/swift_packages/adding_package_dependencies_to_your_app)
+Add component ```PianoC1X``` from the repository:
+
+**URL:** https://gitlab.com/piano-public/sdk/ios/package
+
+**Version:** 2.6.2
+
 ## Import
 
 ```swift
