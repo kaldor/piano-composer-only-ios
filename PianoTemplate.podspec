@@ -1,6 +1,6 @@
 Pod::Spec.new do |s|
   s.name         = 'PianoTemplate'
-  s.version      = '2.6.1'
+  s.version      = '2.6.2'
   s.swift_version = '5.7'
   s.summary      = 'Enables iOS apps to use templates by Piano.io'
   s.homepage     = 'https://gitlab.com/piano-public/sdk/ios/package'

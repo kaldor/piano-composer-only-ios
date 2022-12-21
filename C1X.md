@@ -15,7 +15,7 @@ Add the following lines to your `Podfile`.
 ```
 use_frameworks!
 
-pod 'PianoC1X', '~>2.6.1'
+pod 'PianoC1X', '~>2.6.2'
 ```
 
 ## Import

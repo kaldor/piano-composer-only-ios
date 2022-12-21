@@ -1,5 +1,8 @@
 # Piano SDK for iOS
 
+## v2.6.2
+* [PianoOAuth] - Improved error handling
+
 ## v2.6.1
 * Fixes for iOS 13+
 

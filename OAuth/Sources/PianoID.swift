@@ -566,21 +566,17 @@ public class PianoID: NSObject {
         _currentToken = token
         _ = PianoIDTokenStorage.shared.saveToken(token, aid: getAID())
 
-        if (delegate?.signIn != nil) {
-            let result = PianoIDSignInResult(token, isNewUser)
-            signInHandler {
-                self.delegate!.signIn!(result: result, withError: nil)
-                completion?(result, nil)
-            }
+        let result = PianoIDSignInResult(token, isNewUser)
+        signInHandler {
+            self.delegate?.signIn?(result: result, withError: nil)
+            completion?(result, nil)
         }
     }
 
     internal func signInFail(_ error: PianoIDError!, completion: ((PianoIDSignInResult?, Error?) -> Void)? = nil) {
-        if (delegate?.signIn != nil) {
-            signInHandler {
-                self.delegate!.signIn!(result: nil, withError: error)
-                completion?(nil, error)
-            }
+        signInHandler {
+            self.delegate?.signIn?(result: nil, withError: error)
+            completion?(nil, error)
         }
     }
 

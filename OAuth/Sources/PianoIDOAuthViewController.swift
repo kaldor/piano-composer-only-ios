@@ -12,6 +12,7 @@ class PianoIDOAuthViewController: UIViewController {
     let registerSuccessMessageHandler = "registerSuccess"
     let socialLoginMessageHandler = "socialLogin"
     let customEventMessageHandler = "customEvent"
+    let errorMessageHandler = "error"
 
 
     weak var mainWebView: WKWebView?
@@ -120,6 +121,7 @@ class PianoIDOAuthViewController: UIViewController {
         webViewContentController.add(self, name: registerSuccessMessageHandler)
         webViewContentController.add(self, name: socialLoginMessageHandler)
         webViewContentController.add(self, name: customEventMessageHandler)
+        webViewContentController.add(self, name: errorMessageHandler)
 
         let config = WKWebViewConfiguration()
         config.preferences.javaScriptEnabled = true
@@ -143,6 +145,7 @@ class PianoIDOAuthViewController: UIViewController {
         webViewContentController.removeScriptMessageHandler(forName: registerSuccessMessageHandler)
         webViewContentController.removeScriptMessageHandler(forName: socialLoginMessageHandler)
         webViewContentController.removeScriptMessageHandler(forName: customEventMessageHandler)
+        webViewContentController.removeScriptMessageHandler(forName: errorMessageHandler)
 
         if let webView = mainWebView {
             deinitWebView(webView)
@@ -318,7 +321,9 @@ extension PianoIDOAuthViewController: WKNavigationDelegate {
             "window.PianoIDMobileSDK.\(socialLoginMessageHandler)=" +
             "function(body){try{webkit.messageHandlers.\(socialLoginMessageHandler).postMessage(body)}catch(err){console.log(err)}};" +
             "window.PianoIDMobileSDK.\(customEventMessageHandler)=" +
-            "function(body){try{webkit.messageHandlers.\(customEventMessageHandler).postMessage(body)}catch(err){console.log(err)}};"
+            "function(body){try{webkit.messageHandlers.\(customEventMessageHandler).postMessage(body)}catch(err){console.log(err)}};" +
+            "window.PianoIDMobileSDK.\(errorMessageHandler)=" +
+            "function(body){try{webkit.messageHandlers.\(errorMessageHandler).postMessage(body)}catch(err){console.log(err)}};"
 
         webView.evaluateJavaScript(jsBridgeInitialScript)
     }
@@ -418,6 +423,8 @@ extension PianoIDOAuthViewController: WKScriptMessageHandler {
             socialLogin(body: message.body as? String ?? "")
         case customEventMessageHandler:
             customEvent(body: message.body as? String ?? "")
+        case errorMessageHandler:
+            error(body: message.body as? String ?? "")
         default:
             logError("Unknown JS message handler: \"\(message.name)\"")
         }
@@ -467,6 +474,17 @@ extension PianoIDOAuthViewController: WKScriptMessageHandler {
         }
 
         PianoID.shared.delegate?.customEvent?(event: json)
+    }
+    
+    func error(body: String) {
+        guard let json = body.parseJson() else {
+            logError("Custom event: incorrect input parameters")
+            return
+        }
+        
+        logError(json["message"] as? String ?? "Unknown error")
+
+        PianoID.shared.signInFail(PianoIDError.signInFailed, completion: completion)
     }
 
     func logError(_ message: String) {
