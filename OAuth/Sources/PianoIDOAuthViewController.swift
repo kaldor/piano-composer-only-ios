@@ -477,12 +477,9 @@ extension PianoIDOAuthViewController: WKScriptMessageHandler {
     }
     
     func error(body: String) {
-        guard let json = body.parseJson() else {
-            logError("Custom event: incorrect input parameters")
-            return
-        }
+        let json = body.parseJson()
         
-        logError(json["message"] as? String ?? "Unknown error")
+        logError(json?["message"] as? String ?? "Unknown error")
 
         PianoID.shared.signInFail(PianoIDError.signInFailed, completion: completion)
     }
